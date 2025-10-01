@@ -41,6 +41,13 @@ type Trade struct {
 	Source        string
 }
 
+func (t Trade) RoutingKey() string {
+	return fmt.Sprintf(
+		"binance.%s.trade.%s",
+		t.Source, t.Symbol,
+	)
+}
+
 type OrderBookEntry struct {
 	Price    float64
 	Quantity float64
@@ -97,6 +104,13 @@ func (o OrderBook) String() string {
 	)
 }
 
+func (o OrderBook) RoutingKey() string {
+	return fmt.Sprintf(
+		"binance.%s.orderbook.%s",
+		o.Source, o.Symbol,
+	)
+}
+
 type TrueRangeRatio struct {
 	StartTime    int64
 	EndTime      int64
@@ -120,6 +134,13 @@ type Kline struct {
 func (k Kline) String() string {
 	return fmt.Sprintf("Kline (%s), t:%v, v:%v, s:%s, l:%d",
 		k.Symbol, k.TrueRangeRatios, k.Volumns, k.Source, k.LocalTime)
+}
+
+func (k Kline) RoutingKey() string {
+	return fmt.Sprintf(
+		"binance.%s.kline.%s",
+		k.Source, k.Symbol,
+	)
 }
 
 // WebSocket Event Structs
