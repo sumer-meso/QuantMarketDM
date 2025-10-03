@@ -1,0 +1,42 @@
+package binance
+
+import (
+	"fmt"
+)
+
+type Trade struct {
+	Event         string
+	Time          int64
+	Symbol        string
+	TradeID       int64
+	Price         float64
+	Quantity      float64
+	BuyerOrderId  int64
+	SellerOrderId int64
+	TradeTime     int64
+	IsBuyerMaker  bool
+	Placeholder   bool
+	LocalTime     int64
+	Source        string
+}
+
+func (t Trade) RoutingKey() string {
+	return fmt.Sprintf(
+		"binance.%s.trade.%s",
+		t.Source, t.Symbol,
+	)
+}
+
+type WsTradeEvent struct {
+	Time          int64  `json:"E"`
+	Event         string `json:"e"`
+	Symbol        string `json:"s"`
+	TradeID       int64  `json:"t"`
+	Price         string `json:"p"`
+	Quantity      string `json:"q"`
+	BuyerOrderId  int64  `json:"b"`
+	SellerOrderId int64  `json:"a"`
+	TradeTime     int64  `json:"T"`
+	IsBuyerMaker  bool   `json:"m"`
+	Placeholder   bool   `json:"M"` // add this field to avoid case insensitive unmarshaling
+}
