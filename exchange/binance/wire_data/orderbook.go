@@ -1,4 +1,4 @@
-package binance
+package wiredata
 
 import (
 	"fmt"
@@ -60,11 +60,15 @@ func (o OrderBook) String() string {
 	)
 }
 
-func (o OrderBook) RoutingKey() string {
+func (o OrderBook) RMQRoutingIdentifier() string {
 	return fmt.Sprintf(
 		"binance.%s.orderbook.%s",
 		o.Source, o.Symbol,
 	)
+}
+
+func (k OrderBook) RMQDataIdentifier() string {
+	return "binance.orderbook"
 }
 
 type WsDepthEvent struct {

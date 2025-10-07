@@ -1,6 +1,8 @@
-package binance
+package wiredata
 
-import "fmt"
+import (
+	"fmt"
+)
 
 type TrueRangeRatio struct {
 	StartTime    int64
@@ -27,11 +29,15 @@ func (k Kline) String() string {
 		k.Symbol, k.TrueRangeRatios, k.Volumns, k.Source, k.LocalTime)
 }
 
-func (k Kline) RoutingKey() string {
+func (k Kline) RMQRoutingIdentifier() string {
 	return fmt.Sprintf(
 		"binance.%s.kline.%s",
 		k.Source, k.Symbol,
 	)
+}
+
+func (k Kline) RMQDataIdentifier() string {
+	return "binance.kline"
 }
 
 // WsKlineEvent define websocket kline event

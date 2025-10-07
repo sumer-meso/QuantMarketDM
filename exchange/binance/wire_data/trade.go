@@ -1,4 +1,4 @@
-package binance
+package wiredata
 
 import (
 	"fmt"
@@ -20,11 +20,15 @@ type Trade struct {
 	Source        string
 }
 
-func (t Trade) RoutingKey() string {
+func (t Trade) RMQRoutingIdentifier() string {
 	return fmt.Sprintf(
 		"binance.%s.trade.%s",
 		t.Source, t.Symbol,
 	)
+}
+
+func (k Trade) RMQDataIdentifier() string {
+	return "binance.trade"
 }
 
 type WsTradeEvent struct {
