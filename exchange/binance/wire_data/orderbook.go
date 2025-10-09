@@ -1,6 +1,7 @@
 package wiredata
 
 import (
+	"encoding/json"
 	"fmt"
 )
 
@@ -47,28 +48,47 @@ type OrderBook struct {
 	Imbalances       []ImbalanceEntry
 }
 
-func (o OrderBook) String() string {
+func (ob *OrderBook) String() string {
 	return fmt.Sprintf(
 		"OrderBook (%s) (%s) Time(%d), LocalTime(%d):"+
 			"%d -> %d, Pu: (%d)\n"+
 			"Asks(%d):%+v ...\n"+
 			"Bids(%d):%+v ...\n",
-		o.Symbol, o.Event, o.Time, o.LocalTime,
-		o.FirstUpdateID, o.LastUpdateID, o.PreviousUpdateID,
-		len(o.Asks), o.Asks[:min(len(o.Asks), 50)],
-		len(o.Bids), o.Bids[:min(len(o.Bids), 50)],
+		ob.Symbol, ob.Event, ob.Time, ob.LocalTime,
+		ob.FirstUpdateID, ob.LastUpdateID, ob.PreviousUpdateID,
+		len(ob.Asks), ob.Asks[:min(len(ob.Asks), 50)],
+		len(ob.Bids), ob.Bids[:min(len(ob.Bids), 50)],
 	)
 }
 
-func (o OrderBook) RMQRoutingIdentifier() string {
+func (ob *OrderBook) RMQRoutingIdentifier() string {
 	return fmt.Sprintf(
 		"binance.%s.orderbook.%s",
-		o.Source, o.Symbol,
+		ob.Source, ob.Symbol,
 	)
 }
 
-func (k OrderBook) RMQDataIdentifier() string {
+func (ob *OrderBook) RMQDataIdentifier() string {
 	return "binance.orderbook"
+}
+
+func (ob *OrderBook) RMQEncodeMessage() (MessageOverRabbitMQ, error) {
+	if body, err := json.Marshal(ob); err != nil {
+		return MessageOverRabbitMQ{}, err
+	} else {
+		return MessageOverRabbitMQ{
+			RoutingKey:     ob.RMQRoutingIdentifier(),
+			DataIdentifier: ob.RMQDataIdentifier(),
+			Body:           body,
+		}, nil
+	}
+}
+
+func (ob *OrderBook) RMQDecodeMessage(m MessageOverRabbitMQ) error {
+	if m.DataIdentifier != ob.RMQDataIdentifier() {
+		return NotMatchError{Expected: ob.RMQDataIdentifier(), Actual: m.DataIdentifier}
+	}
+	return json.Unmarshal(m.Body, ob)
 }
 
 type WsDepthEvent struct {

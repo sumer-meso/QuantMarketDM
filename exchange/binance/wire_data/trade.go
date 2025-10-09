@@ -1,6 +1,7 @@
 package wiredata
 
 import (
+	"encoding/json"
 	"fmt"
 )
 
@@ -20,15 +21,34 @@ type Trade struct {
 	Source        string
 }
 
-func (t Trade) RMQRoutingIdentifier() string {
+func (t *Trade) RMQRoutingIdentifier() string {
 	return fmt.Sprintf(
 		"binance.%s.trade.%s",
 		t.Source, t.Symbol,
 	)
 }
 
-func (k Trade) RMQDataIdentifier() string {
+func (k *Trade) RMQDataIdentifier() string {
 	return "binance.trade"
+}
+
+func (t *Trade) RMQEncodeMessage() (MessageOverRabbitMQ, error) {
+	if body, err := json.Marshal(t); err != nil {
+		return MessageOverRabbitMQ{}, err
+	} else {
+		return MessageOverRabbitMQ{
+			RoutingKey:     t.RMQRoutingIdentifier(),
+			DataIdentifier: t.RMQDataIdentifier(),
+			Body:           body,
+		}, nil
+	}
+}
+
+func (t *Trade) RMQDecodeMessage(m MessageOverRabbitMQ) error {
+	if m.DataIdentifier != t.RMQDataIdentifier() {
+		return NotMatchError{Expected: t.RMQDataIdentifier(), Actual: m.DataIdentifier}
+	}
+	return json.Unmarshal(m.Body, t)
 }
 
 type WsTradeEvent struct {

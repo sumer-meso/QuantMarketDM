@@ -1,6 +1,7 @@
 package wiredata
 
 import (
+	"encoding/json"
 	"fmt"
 )
 
@@ -24,20 +25,39 @@ type Kline struct {
 	Source          string
 }
 
-func (k Kline) String() string {
+func (k *Kline) String() string {
 	return fmt.Sprintf("Kline (%s), t:%v, v:%v, s:%s, l:%d",
 		k.Symbol, k.TrueRangeRatios, k.Volumns, k.Source, k.LocalTime)
 }
 
-func (k Kline) RMQRoutingIdentifier() string {
+func (k *Kline) RMQRoutingIdentifier() string {
 	return fmt.Sprintf(
 		"binance.%s.kline.%s",
 		k.Source, k.Symbol,
 	)
 }
 
-func (k Kline) RMQDataIdentifier() string {
+func (k *Kline) RMQDataIdentifier() string {
 	return "binance.kline"
+}
+
+func (k *Kline) RMQEncodeMessage() (MessageOverRabbitMQ, error) {
+	if body, err := json.Marshal(k); err != nil {
+		return MessageOverRabbitMQ{}, err
+	} else {
+		return MessageOverRabbitMQ{
+			RoutingKey:     k.RMQRoutingIdentifier(),
+			DataIdentifier: k.RMQDataIdentifier(),
+			Body:           body,
+		}, nil
+	}
+}
+
+func (k *Kline) RMQDecodeMessage(m MessageOverRabbitMQ) error {
+	if m.DataIdentifier != k.RMQDataIdentifier() {
+		return NotMatchError{Expected: k.RMQDataIdentifier(), Actual: m.DataIdentifier}
+	}
+	return json.Unmarshal(m.Body, k)
 }
 
 // WsKlineEvent define websocket kline event
