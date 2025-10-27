@@ -17,10 +17,11 @@ func (m *MessageOverRabbitMQ) PublishOnWire(ctx context.Context, ch *amqp.Channe
 	return ch.PublishWithContext(ctx,
 		exchange, m.RoutingKey, false, false,
 		amqp.Publishing{
-			ContentType: "application/json",
-			Headers:     amqp.Table{"x-msg-type": m.DataIdentifier},
-			Expiration:  expiration,
-			Body:        m.Body,
+			ContentType:  "application/json",
+			Headers:      amqp.Table{"x-msg-type": m.DataIdentifier},
+			Expiration:   expiration,
+			DeliveryMode: amqp.Transient,
+			Body:         m.Body,
 		})
 }
 
