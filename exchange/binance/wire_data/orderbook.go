@@ -61,10 +61,12 @@ func (ob *OrderBook) String() string {
 	)
 }
 
+const obIndexSpecInRMQ = "{Time:-1,LocalTime:-1}"
+
 func (ob *OrderBook) RMQRoutingIdentifier() string {
 	return fmt.Sprintf(
-		"binance.%s.orderbook.%s",
-		ob.Source, ob.Symbol,
+		"binance.%s.orderbook.%s.%s",
+		ob.Source, ob.Symbol, obIndexSpecInRMQ,
 	)
 }
 

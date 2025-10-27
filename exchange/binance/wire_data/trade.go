@@ -21,10 +21,12 @@ type Trade struct {
 	Source        string
 }
 
+const tradeIndexSpecInRMQ = "{TradeTime:-1,LocalTime:-1}"
+
 func (t *Trade) RMQRoutingIdentifier() string {
 	return fmt.Sprintf(
-		"binance.%s.trade.%s",
-		t.Source, t.Symbol,
+		"binance.%s.trade.%s.%s",
+		t.Source, t.Symbol, tradeIndexSpecInRMQ,
 	)
 }
 

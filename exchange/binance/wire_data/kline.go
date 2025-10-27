@@ -30,10 +30,12 @@ func (k *Kline) String() string {
 		k.Symbol, k.TrueRangeRatios, k.Volumns, k.Source, k.LocalTime)
 }
 
+const klineIndexSpecInRMQ = "{LocalTime:-1}"
+
 func (k *Kline) RMQRoutingIdentifier() string {
 	return fmt.Sprintf(
-		"binance.%s.kline.%s",
-		k.Source, k.Symbol,
+		"binance.%s.kline.%s.%s",
+		k.Source, k.Symbol, klineIndexSpecInRMQ,
 	)
 }
 
