@@ -10,8 +10,9 @@ type RabbitMQ struct {
 }
 
 type IndicatorSettings struct {
-	Spread     string `json:"spread"`
-	Imbalances string `json:"imbalances"`
+	Spread     string `json:"spread,omitempty"`
+	Imbalances string `json:"imbalances,omitempty"`
+	ApiKey     string `json:"apikey,omitempty"`
 }
 
 type ConfigFile struct {
