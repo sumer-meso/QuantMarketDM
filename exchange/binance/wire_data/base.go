@@ -7,6 +7,20 @@ import (
 	amqp "github.com/rabbitmq/amqp091-go"
 )
 
+type WSEventBase struct {
+	Event string `json:"e"`
+	Time  int64  `json:"E"`
+}
+
+type EventBase struct {
+	Event string
+	Time  int64
+}
+
+type LocalBase struct {
+	LocalTime int64
+}
+
 type MessageOverRabbitMQ struct {
 	RoutingKey     string
 	DataIdentifier string
