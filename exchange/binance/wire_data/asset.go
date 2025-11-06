@@ -3,12 +3,73 @@ package wiredata
 import (
 	"encoding/json"
 	"fmt"
+	"time"
 )
 
 type WsUsdtEventBase struct {
 	WSEventBase
 	AccountUpdate *WsAccountUpdate `json:"a,omitempty"`
 	OrderUpdate   *WsOrderUpdate   `json:"o,omitempty"`
+}
+
+func (wueb *WsUsdtEventBase) ToAccountUpdate() AccountUpdate {
+	if wueb.AccountUpdate == nil {
+		return AccountUpdate{}
+	}
+	wau := wueb.AccountUpdate
+	au := AccountUpdate{
+		EventBase: EventBase(wueb.WSEventBase),
+		Reason:    wau.Reason,
+		Balances:  make([]AccountBalance, 0, len(wau.Balances)),
+		Positions: make([]AccountPosition, 0, len(wau.Positions)),
+		LocalBase: LocalBase{LocalTime: time.Now().UnixMilli()},
+	}
+	for _, b := range wau.Balances {
+		au.Balances = append(au.Balances, AccountBalance(b))
+	}
+	for _, p := range wau.Positions {
+		au.Positions = append(au.Positions, AccountPosition(p))
+	}
+
+	return au
+}
+
+func (wueb *WsUsdtEventBase) ToOrderUpdate() OrderUpdate {
+	if wueb.OrderUpdate == nil {
+		return OrderUpdate{}
+	}
+	wou := wueb.OrderUpdate
+	return OrderUpdate{
+		EventBase:       EventBase(wueb.WSEventBase),
+		Symbol:          wou.Symbol,
+		ClientOrderID:   wou.ClientOrderID,
+		Side:            wou.Side,
+		Type:            wou.Type,
+		TimeInForce:     wou.TimeInForce,
+		OrigQty:         wou.OrigQty,
+		Price:           wou.Price,
+		AvgPrice:        wou.AvgPrice,
+		StopPrice:       wou.StopPrice,
+		ExecType:        wou.ExecType,
+		OrderStatus:     wou.OrderStatus,
+		OrderID:         wou.OrderID,
+		LastFilledQty:   wou.LastFilledQty,
+		CumFilledQty:    wou.CumFilledQty,
+		LastFilledPrice: wou.LastFilledPrice,
+		FeeAsset:        wou.FeeAsset,
+		FeeAmount:       wou.FeeAmount,
+		TradeTime:       wou.TradeTime,
+		TradeID:         wou.TradeID,
+		Maker:           wou.Maker,
+		ReduceOnly:      wou.ReduceOnly,
+		WorkingType:     wou.WorkingType,
+		OrigType:        wou.OrigType,
+		PositionSide:    wou.PositionSide,
+		ClosePosition:   wou.ClosePosition,
+		RealizedPnL:     wou.RealizedPnL,
+		PriceProtect:    wou.PriceProtect,
+		LocalBase:       LocalBase{LocalTime: time.Now().UnixMilli()},
+	}
 }
 
 // ========== ACCOUNT_UPDATE ==========
@@ -217,4 +278,15 @@ type WsTradeLite struct {
 	Side     string `json:"S"`
 	Price    string `json:"p"`
 	Quantity string `json:"q"`
+}
+
+func (wtl *WsTradeLite) ToTradeLite() TradeLite {
+	return TradeLite{
+		EventBase: EventBase(wtl.WSEventBase),
+		Symbol:    wtl.Symbol,
+		Side:      wtl.Side,
+		Price:     wtl.Price,
+		Quantity:  wtl.Quantity,
+		LocalBase: LocalBase{LocalTime: time.Now().UnixMilli()},
+	}
 }
