@@ -8,13 +8,15 @@ import (
 )
 
 type WSEventBase struct {
-	Event string `json:"e"`
-	Time  int64  `json:"E"`
+	Event     string `json:"e"`
+	Time      int64  `json:"E"`
+	TransTime int64  `json:"T"`
 }
 
 type EventBase struct {
-	Event string
-	Time  int64
+	Event     string
+	Time      int64
+	TransTime int64
 }
 
 type LocalBase struct {

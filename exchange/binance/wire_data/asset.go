@@ -7,9 +7,8 @@ import (
 
 type WsUsdtEventBase struct {
 	WSEventBase
-	TransTime     int64          `json:"T"`
-	AccountUpdate *AccountUpdate `json:"a,omitempty"`
-	OrderUpdate   *OrderUpdate   `json:"o,omitempty"`
+	AccountUpdate *WsAccountUpdate `json:"a,omitempty"`
+	OrderUpdate   *WsOrderUpdate   `json:"o,omitempty"`
 }
 
 // ========== ACCOUNT_UPDATE ==========
@@ -68,7 +67,6 @@ type WsAccountUpdate struct {
 	Reason    string              `json:"m"`
 	Balances  []WsAccountBalance  `json:"B"`
 	Positions []WsAccountPosition `json:"P"`
-	LocalTime int64               `json:"LocalTime"`
 }
 
 type WsAccountBalance struct {
@@ -181,15 +179,14 @@ type WsOrderUpdate struct {
 
 type TradeLite struct {
 	EventBase
-	Symbol    string
-	Side      string
-	Price     string
-	Quantity  string
-	TradeTime int64
+	Symbol   string
+	Side     string
+	Price    string
+	Quantity string
 	LocalBase
 }
 
-const tlIndexSpecInRMQ = "{LocalTime:-1,TradeTime:-1}"
+const tlIndexSpecInRMQ = "{LocalTime:-1,TransTime:-1}"
 
 func (tl *TradeLite) RMQRoutingIdentifier() string {
 	return fmt.Sprintf(
@@ -215,9 +212,9 @@ func (tl *TradeLite) RMQEncodeMessage() (MessageOverRabbitMQ, error) {
 }
 
 type WsTradeLite struct {
-	Symbol    string `json:"s"`
-	Side      string `json:"S"`
-	Price     string `json:"p"`
-	Quantity  string `json:"q"`
-	TradeTime int64  `json:"T"`
+	WSEventBase
+	Symbol   string `json:"s"`
+	Side     string `json:"S"`
+	Price    string `json:"p"`
+	Quantity string `json:"q"`
 }
