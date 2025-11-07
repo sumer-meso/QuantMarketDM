@@ -8,19 +8,18 @@ import (
 )
 
 type WSEventBase struct {
-	Event     string `json:"e"`
-	Time      int64  `json:"E"`
-	TransTime int64  `json:"T"`
+	Event string `json:"e"`
+	Time  int64  `json:"E"`
 }
 
 type EventBase struct {
-	Event     string
-	Time      int64
-	TransTime int64
+	Event string
+	Time  int64
 }
 
 type LocalBase struct {
 	LocalTime int64
+	Source    string
 }
 
 type MessageOverRabbitMQ struct {

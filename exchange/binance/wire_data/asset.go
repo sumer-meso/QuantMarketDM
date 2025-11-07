@@ -8,21 +8,23 @@ import (
 
 type WsUsdtEventBase struct {
 	WSEventBase
+	TransTime     int64            `json:"T"`
 	AccountUpdate *WsAccountUpdate `json:"a,omitempty"`
 	OrderUpdate   *WsOrderUpdate   `json:"o,omitempty"`
 }
 
-func (wueb *WsUsdtEventBase) ToAccountUpdate() AccountUpdate {
+func (wueb *WsUsdtEventBase) ToAccountUpdate(source string) AccountUpdate {
 	if wueb.AccountUpdate == nil {
 		return AccountUpdate{}
 	}
 	wau := wueb.AccountUpdate
 	au := AccountUpdate{
 		EventBase: EventBase(wueb.WSEventBase),
+		TransTime: wueb.TransTime,
 		Reason:    wau.Reason,
 		Balances:  make([]AccountBalance, 0, len(wau.Balances)),
 		Positions: make([]AccountPosition, 0, len(wau.Positions)),
-		LocalBase: LocalBase{LocalTime: time.Now().UnixMilli()},
+		LocalBase: LocalBase{LocalTime: time.Now().UnixMilli(), Source: source},
 	}
 	for _, b := range wau.Balances {
 		au.Balances = append(au.Balances, AccountBalance(b))
@@ -34,13 +36,14 @@ func (wueb *WsUsdtEventBase) ToAccountUpdate() AccountUpdate {
 	return au
 }
 
-func (wueb *WsUsdtEventBase) ToOrderUpdate() OrderUpdate {
+func (wueb *WsUsdtEventBase) ToOrderUpdate(source string) OrderUpdate {
 	if wueb.OrderUpdate == nil {
 		return OrderUpdate{}
 	}
 	wou := wueb.OrderUpdate
 	return OrderUpdate{
 		EventBase:       EventBase(wueb.WSEventBase),
+		TransTime:       wueb.TransTime,
 		Symbol:          wou.Symbol,
 		ClientOrderID:   wou.ClientOrderID,
 		Side:            wou.Side,
@@ -68,7 +71,7 @@ func (wueb *WsUsdtEventBase) ToOrderUpdate() OrderUpdate {
 		ClosePosition:   wou.ClosePosition,
 		RealizedPnL:     wou.RealizedPnL,
 		PriceProtect:    wou.PriceProtect,
-		LocalBase:       LocalBase{LocalTime: time.Now().UnixMilli()},
+		LocalBase:       LocalBase{LocalTime: time.Now().UnixMilli(), Source: source},
 	}
 }
 
@@ -76,6 +79,7 @@ func (wueb *WsUsdtEventBase) ToOrderUpdate() OrderUpdate {
 
 type AccountUpdate struct {
 	EventBase
+	TransTime int64
 	Reason    string
 	Balances  []AccountBalance
 	Positions []AccountPosition
@@ -103,8 +107,8 @@ const auIndexSpecInRMQ = "{LocalTime:-1}"
 
 func (au *AccountUpdate) RMQRoutingIdentifier() string {
 	return fmt.Sprintf(
-		"binance.accountupdate.%s",
-		auIndexSpecInRMQ,
+		"binance.%s.accountupdate.%s",
+		au.LocalBase.Source, auIndexSpecInRMQ,
 	)
 }
 
@@ -151,6 +155,7 @@ type WsAccountPosition struct {
 
 type OrderUpdate struct {
 	EventBase
+	TransTime       int64
 	Symbol          string
 	ClientOrderID   string
 	Side            string
@@ -185,8 +190,8 @@ const ouIndexSpecInRMQ = "{LocalTime:-1}"
 
 func (ou *OrderUpdate) RMQRoutingIdentifier() string {
 	return fmt.Sprintf(
-		"binance.orderupdate.%s",
-		ouIndexSpecInRMQ,
+		"binance.%s.orderupdate.%s",
+		ou.LocalBase.Source, ouIndexSpecInRMQ,
 	)
 }
 
@@ -240,10 +245,11 @@ type WsOrderUpdate struct {
 
 type TradeLite struct {
 	EventBase
-	Symbol   string
-	Side     string
-	Price    string
-	Quantity string
+	TradeTime int64
+	Symbol    string
+	Side      string
+	Price     string
+	Quantity  string
 	LocalBase
 }
 
@@ -251,8 +257,8 @@ const tlIndexSpecInRMQ = "{LocalTime:-1,TransTime:-1}"
 
 func (tl *TradeLite) RMQRoutingIdentifier() string {
 	return fmt.Sprintf(
-		"binance.tradelite.%s",
-		tlIndexSpecInRMQ,
+		"binance.%s.tradelite.%s",
+		tl.LocalBase.Source, tlIndexSpecInRMQ,
 	)
 }
 
@@ -274,19 +280,21 @@ func (tl *TradeLite) RMQEncodeMessage() (MessageOverRabbitMQ, error) {
 
 type WsTradeLite struct {
 	WSEventBase
-	Symbol   string `json:"s"`
-	Side     string `json:"S"`
-	Price    string `json:"p"`
-	Quantity string `json:"q"`
+	TradeTime int64  `json:"T"`
+	Symbol    string `json:"s"`
+	Side      string `json:"S"`
+	Price     string `json:"p"`
+	Quantity  string `json:"q"`
 }
 
-func (wtl *WsTradeLite) ToTradeLite() TradeLite {
+func (wtl *WsTradeLite) ToTradeLite(source string) TradeLite {
 	return TradeLite{
 		EventBase: EventBase(wtl.WSEventBase),
+		TradeTime: wtl.TradeTime,
 		Symbol:    wtl.Symbol,
 		Side:      wtl.Side,
 		Price:     wtl.Price,
 		Quantity:  wtl.Quantity,
-		LocalBase: LocalBase{LocalTime: time.Now().UnixMilli()},
+		LocalBase: LocalBase{LocalTime: time.Now().UnixMilli(), Source: source},
 	}
 }
