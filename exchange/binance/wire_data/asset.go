@@ -245,15 +245,15 @@ type WsOrderUpdate struct {
 
 type TradeLite struct {
 	EventBase
-	TradeTime int64
-	Symbol    string
-	Side      string
-	Price     string
-	Quantity  string
+	TradeID  int64
+	Symbol   string
+	Side     string
+	Price    string
+	Quantity string
 	LocalBase
 }
 
-const tlIndexSpecInRMQ = "{LocalTime:-1,TransTime:-1}"
+const tlIndexSpecInRMQ = "{LocalTime:-1;TradeID:-1}"
 
 func (tl *TradeLite) RMQRoutingIdentifier() string {
 	return fmt.Sprintf(
@@ -280,17 +280,17 @@ func (tl *TradeLite) RMQEncodeMessage() (MessageOverRabbitMQ, error) {
 
 type WsTradeLite struct {
 	WSEventBase
-	TradeTime int64  `json:"T"`
-	Symbol    string `json:"s"`
-	Side      string `json:"S"`
-	Price     string `json:"p"`
-	Quantity  string `json:"q"`
+	TradeID  int64  `json:"T"`
+	Symbol   string `json:"s"`
+	Side     string `json:"S"`
+	Price    string `json:"p"`
+	Quantity string `json:"q"`
 }
 
 func (wtl *WsTradeLite) ToTradeLite(source string) TradeLite {
 	return TradeLite{
 		EventBase: EventBase(wtl.WSEventBase),
-		TradeTime: wtl.TradeTime,
+		TradeID:   wtl.TradeID,
 		Symbol:    wtl.Symbol,
 		Side:      wtl.Side,
 		Price:     wtl.Price,
