@@ -87,6 +87,8 @@ func (ob *OrderBook) RMQEncodeMessage() (MessageOverRabbitMQ, error) {
 		return MessageOverRabbitMQ{
 			RoutingKey:     ob.RMQRoutingIdentifier(),
 			DataIdentifier: ob.RMQDataIdentifier(),
+			StoreTable:     ob.RMQDataStoreTable(),
+			StoreIndex:     ob.RMQDataStoreIndex(),
 			Body:           body,
 		}, nil
 	}

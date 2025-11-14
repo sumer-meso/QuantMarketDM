@@ -56,6 +56,8 @@ func (k *Kline) RMQEncodeMessage() (MessageOverRabbitMQ, error) {
 		return MessageOverRabbitMQ{
 			RoutingKey:     k.RMQRoutingIdentifier(),
 			DataIdentifier: k.RMQDataIdentifier(),
+			StoreTable:     k.RMQDataStoreTable(),
+			StoreIndex:     k.RMQDataStoreIndex(),
 			Body:           body,
 		}, nil
 	}

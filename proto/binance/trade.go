@@ -44,6 +44,8 @@ func (t *Trade) RMQEncodeMessage() (MessageOverRabbitMQ, error) {
 		return MessageOverRabbitMQ{
 			RoutingKey:     t.RMQRoutingIdentifier(),
 			DataIdentifier: t.RMQDataIdentifier(),
+			StoreTable:     t.RMQDataStoreTable(),
+			StoreIndex:     t.RMQDataStoreIndex(),
 			Body:           body,
 		}, nil
 	}

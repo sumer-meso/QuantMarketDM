@@ -129,6 +129,8 @@ func (au *AccountUpdate) RMQEncodeMessage() (MessageOverRabbitMQ, error) {
 		return MessageOverRabbitMQ{
 			RoutingKey:     au.RMQRoutingIdentifier(),
 			DataIdentifier: au.RMQDataIdentifier(),
+			StoreTable:     au.RMQDataStoreTable(),
+			StoreIndex:     au.RMQDataStoreIndex(),
 			Body:           body,
 		}, nil
 	}
@@ -225,6 +227,8 @@ func (ou *OrderUpdate) RMQEncodeMessage() (MessageOverRabbitMQ, error) {
 		return MessageOverRabbitMQ{
 			RoutingKey:     ou.RMQRoutingIdentifier(),
 			DataIdentifier: ou.RMQDataIdentifier(),
+			StoreTable:     ou.RMQDataStoreTable(),
+			StoreIndex:     ou.RMQDataStoreIndex(),
 			Body:           body,
 		}, nil
 	}
@@ -305,6 +309,8 @@ func (tl *TradeLite) RMQEncodeMessage() (MessageOverRabbitMQ, error) {
 		return MessageOverRabbitMQ{
 			RoutingKey:     tl.RMQRoutingIdentifier(),
 			DataIdentifier: tl.RMQDataIdentifier(),
+			StoreTable:     tl.RMQDataStoreTable(),
+			StoreIndex:     tl.RMQDataStoreIndex(),
 			Body:           body,
 		}, nil
 	}
