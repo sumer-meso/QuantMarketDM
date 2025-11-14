@@ -5,7 +5,7 @@ import "encoding/json"
 type RabbitMQ struct {
 	Host     string `json:"host"`
 	Port     string `json:"port"`
-	HttpPort string `json:"http_port"`
+	HttpPort string `json:"http_port,omitempty"`
 	Username string `json:"username"`
 	Password string `json:"password"`
 }
@@ -17,7 +17,7 @@ type IndicatorSettings struct {
 }
 
 type ConfigFile struct {
-	Rabbitmq RabbitMQ                                `json:"rabbitmq"`
-	Sources  map[string]map[string]IndicatorSettings `json:"sources"`
-	Strategy json.RawMessage                         `json:"strategy"`
+	Rabbitmq RabbitMQ                                `json:"rabbitmq,omitempty"`
+	Sources  map[string]map[string]IndicatorSettings `json:"sources,omitempty"`
+	Strategy json.RawMessage                         `json:"strategy,omitempty"`
 }
