@@ -1,15 +1,12 @@
-package wiredata
+package proto
 
 import (
 	"context"
 	"fmt"
 
 	amqp "github.com/rabbitmq/amqp091-go"
+	"github.com/sumer-meso/QuantMarketDM/exchange/common"
 )
-
-const HeaderKeyType = "x-tide-type"
-const HeaderKeyTable = "x-tide-table"
-const HeaderKeyIndex = "x-tide-index"
 
 const defaultMsgTTLInQueue = "20000"
 
@@ -42,9 +39,9 @@ func (m *MessageOverRabbitMQ) PublishOnWire(ctx context.Context, ch *amqp.Channe
 		amqp.Publishing{
 			ContentType: "application/json",
 			Headers: amqp.Table{
-				HeaderKeyType:  m.DataIdentifier,
-				HeaderKeyTable: m.StoreTable,
-				HeaderKeyIndex: m.StoreIndex,
+				common.HeaderKeyType:  m.DataIdentifier,
+				common.HeaderKeyTable: m.StoreTable,
+				common.HeaderKeyIndex: m.StoreIndex,
 			},
 			Expiration:   defaultMsgTTLInQueue,
 			DeliveryMode: amqp.Transient,
@@ -53,17 +50,17 @@ func (m *MessageOverRabbitMQ) PublishOnWire(ctx context.Context, ch *amqp.Channe
 }
 
 func (m *MessageOverRabbitMQ) RetrieveFromWire(ctx context.Context, del *amqp.Delivery) error {
-	if v, ok := del.Headers[HeaderKeyType]; ok {
+	if v, ok := del.Headers[common.HeaderKeyType]; ok {
 		if s, ok := v.(string); ok {
 			m.DataIdentifier = s
 		}
 	}
-	if v, ok := del.Headers[HeaderKeyTable]; ok {
+	if v, ok := del.Headers[common.HeaderKeyTable]; ok {
 		if s, ok := v.(string); ok {
 			m.StoreTable = s
 		}
 	}
-	if v, ok := del.Headers[HeaderKeyIndex]; ok {
+	if v, ok := del.Headers[common.HeaderKeyIndex]; ok {
 		if s, ok := v.(string); ok {
 			m.StoreIndex = s
 		}

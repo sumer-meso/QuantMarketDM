@@ -1,4 +1,4 @@
-package wiredata
+package proto
 
 import (
 	"encoding/json"

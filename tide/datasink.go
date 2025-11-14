@@ -3,7 +3,7 @@ package tide
 import (
 	"context"
 
-	bWiredata "github.com/sumer-meso/QuantMarketDM/exchange/binance/wire_data"
+	bWiredata "github.com/sumer-meso/QuantMarketDM/exchange/binance/proto"
 )
 
 // DataSink receives decoded data from wire.
