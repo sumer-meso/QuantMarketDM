@@ -103,17 +103,23 @@ type AccountPosition struct {
 	PositionSide      string
 }
 
-const auIndexSpecInRMQ = "{LocalTime:-1}"
-
 func (au *AccountUpdate) RMQRoutingIdentifier() string {
 	return fmt.Sprintf(
-		"binance.%s.accountupdate.%s",
-		au.LocalBase.Source, auIndexSpecInRMQ,
+		"binance.%s.accountupdate",
+		au.LocalBase.Source,
 	)
 }
 
 func (au *AccountUpdate) RMQDataIdentifier() string {
 	return "binance.accountupdate"
+}
+
+func (au *AccountUpdate) RMQDataStoreTable() string {
+	return au.RMQRoutingIdentifier()
+}
+
+func (au *AccountUpdate) RMQDataStoreIndex() string {
+	return "LocalTime:-1"
 }
 
 func (au *AccountUpdate) RMQEncodeMessage() (MessageOverRabbitMQ, error) {
@@ -126,6 +132,13 @@ func (au *AccountUpdate) RMQEncodeMessage() (MessageOverRabbitMQ, error) {
 			Body:           body,
 		}, nil
 	}
+}
+
+func (au *AccountUpdate) RMQDecodeMessage(m MessageOverRabbitMQ) error {
+	if m.DataIdentifier != au.RMQDataIdentifier() {
+		return NotMatchError{Expected: au.RMQDataIdentifier(), Actual: m.DataIdentifier}
+	}
+	return json.Unmarshal(m.Body, au)
 }
 
 type WsAccountUpdate struct {
@@ -186,17 +199,23 @@ type OrderUpdate struct {
 	LocalBase
 }
 
-const ouIndexSpecInRMQ = "{LocalTime:-1}"
-
 func (ou *OrderUpdate) RMQRoutingIdentifier() string {
 	return fmt.Sprintf(
-		"binance.%s.orderupdate.%s",
-		ou.LocalBase.Source, ouIndexSpecInRMQ,
+		"binance.%s.orderupdate",
+		ou.LocalBase.Source,
 	)
 }
 
-func (au *OrderUpdate) RMQDataIdentifier() string {
+func (ou *OrderUpdate) RMQDataIdentifier() string {
 	return "binance.orderupdate"
+}
+
+func (ou *OrderUpdate) RMQDataStoreTable() string {
+	return ou.RMQRoutingIdentifier()
+}
+
+func (ou *OrderUpdate) RMQDataStoreIndex() string {
+	return "LocalTime:-1"
 }
 
 func (ou *OrderUpdate) RMQEncodeMessage() (MessageOverRabbitMQ, error) {
@@ -209,6 +228,13 @@ func (ou *OrderUpdate) RMQEncodeMessage() (MessageOverRabbitMQ, error) {
 			Body:           body,
 		}, nil
 	}
+}
+
+func (ou *OrderUpdate) RMQDecodeMessage(m MessageOverRabbitMQ) error {
+	if m.DataIdentifier != ou.RMQDataIdentifier() {
+		return NotMatchError{Expected: ou.RMQDataIdentifier(), Actual: m.DataIdentifier}
+	}
+	return json.Unmarshal(m.Body, ou)
 }
 
 type WsOrderUpdate struct {
@@ -253,17 +279,23 @@ type TradeLite struct {
 	LocalBase
 }
 
-const tlIndexSpecInRMQ = "{LocalTime:-1;TradeID:-1}"
-
 func (tl *TradeLite) RMQRoutingIdentifier() string {
 	return fmt.Sprintf(
-		"binance.%s.tradelite.%s",
-		tl.LocalBase.Source, tlIndexSpecInRMQ,
+		"binance.%s.tradelite",
+		tl.LocalBase.Source,
 	)
 }
 
 func (tl *TradeLite) RMQDataIdentifier() string {
 	return "binance.tradelite"
+}
+
+func (tl *TradeLite) RMQDataStoreTable() string {
+	return tl.RMQRoutingIdentifier()
+}
+
+func (tl *TradeLite) RMQDataStoreIndex() string {
+	return "LocalTime:-1;TradeID:-1"
 }
 
 func (tl *TradeLite) RMQEncodeMessage() (MessageOverRabbitMQ, error) {
@@ -276,6 +308,13 @@ func (tl *TradeLite) RMQEncodeMessage() (MessageOverRabbitMQ, error) {
 			Body:           body,
 		}, nil
 	}
+}
+
+func (tl *TradeLite) RMQDecodeMessage(m MessageOverRabbitMQ) error {
+	if m.DataIdentifier != tl.RMQDataIdentifier() {
+		return NotMatchError{Expected: tl.RMQDataIdentifier(), Actual: m.DataIdentifier}
+	}
+	return json.Unmarshal(m.Body, tl)
 }
 
 type WsTradeLite struct {

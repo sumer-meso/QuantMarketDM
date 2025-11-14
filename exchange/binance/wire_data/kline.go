@@ -30,17 +30,23 @@ func (k *Kline) String() string {
 		k.Symbol, k.TrueRangeRatios, k.Volumns, k.Source, k.LocalTime)
 }
 
-const klineIndexSpecInRMQ = "{LocalTime:-1}"
-
 func (k *Kline) RMQRoutingIdentifier() string {
 	return fmt.Sprintf(
-		"binance.%s.kline.%s.%s",
-		k.Source, k.Symbol, klineIndexSpecInRMQ,
+		"binance.%s.kline.%s",
+		k.Source, k.Symbol,
 	)
 }
 
 func (k *Kline) RMQDataIdentifier() string {
 	return "binance.kline"
+}
+
+func (k *Kline) RMQDataStoreTable() string {
+	return k.RMQRoutingIdentifier()
+}
+
+func (k *Kline) RMQDataStoreIndex() string {
+	return "LocalTime:-1"
 }
 
 func (k *Kline) RMQEncodeMessage() (MessageOverRabbitMQ, error) {

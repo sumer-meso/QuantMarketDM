@@ -61,17 +61,23 @@ func (ob *OrderBook) String() string {
 	)
 }
 
-const obIndexSpecInRMQ = "{Time:-1,LocalTime:-1}"
-
 func (ob *OrderBook) RMQRoutingIdentifier() string {
 	return fmt.Sprintf(
-		"binance.%s.orderbook.%s.%s",
-		ob.Source, ob.Symbol, obIndexSpecInRMQ,
+		"binance.%s.orderbook.%s",
+		ob.Source, ob.Symbol,
 	)
 }
 
 func (ob *OrderBook) RMQDataIdentifier() string {
 	return "binance.orderbook"
+}
+
+func (ob *OrderBook) RMQDataStoreTable() string {
+	return ob.RMQRoutingIdentifier()
+}
+
+func (ob *OrderBook) RMQDataStoreIndex() string {
+	return "Time:-1,LocalTime:-1"
 }
 
 func (ob *OrderBook) RMQEncodeMessage() (MessageOverRabbitMQ, error) {

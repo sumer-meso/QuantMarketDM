@@ -21,17 +21,20 @@ type Trade struct {
 	Source        string
 }
 
-const tradeIndexSpecInRMQ = "{TradeTime:-1,LocalTime:-1}"
-
 func (t *Trade) RMQRoutingIdentifier() string {
-	return fmt.Sprintf(
-		"binance.%s.trade.%s.%s",
-		t.Source, t.Symbol, tradeIndexSpecInRMQ,
-	)
+	return fmt.Sprintf("binance.%s.trade.%s", t.Source, t.Symbol)
 }
 
 func (k *Trade) RMQDataIdentifier() string {
 	return "binance.trade"
+}
+
+func (k *Trade) RMQDataStoreTable() string {
+	return k.RMQRoutingIdentifier()
+}
+
+func (k *Trade) RMQDataStoreIndex() string {
+	return "TradeTime:-1,LocalTime:-1"
 }
 
 func (t *Trade) RMQEncodeMessage() (MessageOverRabbitMQ, error) {
