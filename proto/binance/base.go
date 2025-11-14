@@ -1,11 +1,11 @@
-package proto
+package binance
 
 import (
 	"context"
 	"fmt"
 
 	amqp "github.com/rabbitmq/amqp091-go"
-	"github.com/sumer-meso/QuantMarketDM/exchange/common"
+	"github.com/sumer-meso/QuantMarketDM/proto"
 )
 
 const defaultMsgTTLInQueue = "20000"
@@ -39,9 +39,9 @@ func (m *MessageOverRabbitMQ) PublishOnWire(ctx context.Context, ch *amqp.Channe
 		amqp.Publishing{
 			ContentType: "application/json",
 			Headers: amqp.Table{
-				common.HeaderKeyType:  m.DataIdentifier,
-				common.HeaderKeyTable: m.StoreTable,
-				common.HeaderKeyIndex: m.StoreIndex,
+				proto.HeaderKeyType:  m.DataIdentifier,
+				proto.HeaderKeyTable: m.StoreTable,
+				proto.HeaderKeyIndex: m.StoreIndex,
 			},
 			Expiration:   defaultMsgTTLInQueue,
 			DeliveryMode: amqp.Transient,
@@ -50,17 +50,17 @@ func (m *MessageOverRabbitMQ) PublishOnWire(ctx context.Context, ch *amqp.Channe
 }
 
 func (m *MessageOverRabbitMQ) RetrieveFromWire(ctx context.Context, del *amqp.Delivery) error {
-	if v, ok := del.Headers[common.HeaderKeyType]; ok {
+	if v, ok := del.Headers[proto.HeaderKeyType]; ok {
 		if s, ok := v.(string); ok {
 			m.DataIdentifier = s
 		}
 	}
-	if v, ok := del.Headers[common.HeaderKeyTable]; ok {
+	if v, ok := del.Headers[proto.HeaderKeyTable]; ok {
 		if s, ok := v.(string); ok {
 			m.StoreTable = s
 		}
 	}
-	if v, ok := del.Headers[common.HeaderKeyIndex]; ok {
+	if v, ok := del.Headers[proto.HeaderKeyIndex]; ok {
 		if s, ok := v.(string); ok {
 			m.StoreIndex = s
 		}

@@ -1,4 +1,4 @@
-package common
+package proto
 
 const HeaderKeyType = "x-tide-type"
 const HeaderKeyTable = "x-tide-table"

@@ -1,4 +1,4 @@
-package data
+package binance
 
 type Source string
 

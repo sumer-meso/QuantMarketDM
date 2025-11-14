@@ -3,7 +3,7 @@ package tide
 import (
 	"context"
 
-	bWiredata "github.com/sumer-meso/QuantMarketDM/exchange/binance/proto"
+	"github.com/sumer-meso/QuantMarketDM/proto/binance"
 )
 
 // DataSink receives decoded data from wire.
@@ -14,7 +14,7 @@ type DefaultDataSink interface {
 
 // For binance data sink, implement BNDataSink instead.
 type BNDataSink interface {
-	OnBNTrade(ctx context.Context, t bWiredata.Trade) error
-	OnBNKline(ctx context.Context, k bWiredata.Kline) error
-	OnBNOrderBook(ctx context.Context, ob bWiredata.OrderBook) error
+	OnBNTrade(ctx context.Context, t binance.Trade) error
+	OnBNKline(ctx context.Context, k binance.Kline) error
+	OnBNOrderBook(ctx context.Context, ob binance.OrderBook) error
 }

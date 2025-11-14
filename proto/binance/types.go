@@ -1,20 +1,20 @@
-package data
+package binance
 
 import "fmt"
 
-type Type string
+type DataType string
 
 const (
-	Trade     Type = "trade"
-	Orderbook Type = "orderbook"
-	Kline     Type = "kline"
+	TradeData     DataType = "trade"
+	OrderbookData DataType = "orderbook"
+	KlineData     DataType = "kline"
 )
 
-var AllDataTypes = []Type{Trade, Orderbook, Kline}
+var AllDataTypes = []DataType{TradeData, OrderbookData, KlineData}
 
-func (t Type) UrlParam(symbol string, s Source) string {
+func (t DataType) UrlParam(symbol string, s Source) string {
 	switch t {
-	case Trade:
+	case TradeData:
 		switch s {
 		case Spot:
 			return fmt.Sprintf("%s@trade", symbol)
@@ -23,7 +23,7 @@ func (t Type) UrlParam(symbol string, s Source) string {
 		case Coin:
 			return fmt.Sprintf("%s@trade", symbol)
 		}
-	case Orderbook:
+	case OrderbookData:
 		switch s {
 		case Spot:
 			return fmt.Sprintf("%s@depth@100ms", symbol)

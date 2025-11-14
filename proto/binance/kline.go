@@ -1,4 +1,4 @@
-package proto
+package binance
 
 import (
 	"encoding/json"
