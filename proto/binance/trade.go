@@ -39,11 +39,11 @@ func (k *Trade) RMQDataStoreIndex() string {
 	return "TradeTime:-1,LocalTime:-1"
 }
 
-func (t *Trade) RMQEncodeMessage() (proto.MessageOverRabbitMQ, error) {
+func (t *Trade) RMQEncodeMessage() (*proto.MessageOverRabbitMQ, error) {
 	if body, err := json.Marshal(t); err != nil {
-		return proto.MessageOverRabbitMQ{}, err
+		return &proto.MessageOverRabbitMQ{}, err
 	} else {
-		return proto.MessageOverRabbitMQ{
+		return &proto.MessageOverRabbitMQ{
 			RoutingKey:     t.RMQRoutingIdentifier(),
 			DataIdentifier: t.RMQDataIdentifier(),
 			StoreTable:     t.RMQDataStoreTable(),
@@ -53,7 +53,7 @@ func (t *Trade) RMQEncodeMessage() (proto.MessageOverRabbitMQ, error) {
 	}
 }
 
-func (t *Trade) RMQDecodeMessage(m proto.MessageOverRabbitMQ) error {
+func (t *Trade) RMQDecodeMessage(m *proto.MessageOverRabbitMQ) error {
 	if m.DataIdentifier != t.RMQDataIdentifier() {
 		return NotMatchError{Expected: t.RMQDataIdentifier(), Actual: m.DataIdentifier}
 	}

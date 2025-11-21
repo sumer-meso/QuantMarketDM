@@ -51,11 +51,11 @@ func (k *Kline) RMQDataStoreIndex() string {
 	return "LocalTime:-1"
 }
 
-func (k *Kline) RMQEncodeMessage() (proto.MessageOverRabbitMQ, error) {
+func (k *Kline) RMQEncodeMessage() (*proto.MessageOverRabbitMQ, error) {
 	if body, err := json.Marshal(k); err != nil {
-		return proto.MessageOverRabbitMQ{}, err
+		return &proto.MessageOverRabbitMQ{}, err
 	} else {
-		return proto.MessageOverRabbitMQ{
+		return &proto.MessageOverRabbitMQ{
 			RoutingKey:     k.RMQRoutingIdentifier(),
 			DataIdentifier: k.RMQDataIdentifier(),
 			StoreTable:     k.RMQDataStoreTable(),
@@ -65,7 +65,7 @@ func (k *Kline) RMQEncodeMessage() (proto.MessageOverRabbitMQ, error) {
 	}
 }
 
-func (k *Kline) RMQDecodeMessage(m proto.MessageOverRabbitMQ) error {
+func (k *Kline) RMQDecodeMessage(m *proto.MessageOverRabbitMQ) error {
 	if m.DataIdentifier != k.RMQDataIdentifier() {
 		return NotMatchError{Expected: k.RMQDataIdentifier(), Actual: m.DataIdentifier}
 	}

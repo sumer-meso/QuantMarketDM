@@ -70,11 +70,11 @@ func (u *Unknown) RMQDataIdentifier() string {
 	return "tide.unknown"
 }
 
-func (u *Unknown) RMQEncodeMessage() (MessageOverRabbitMQ, error) {
+func (u *Unknown) RMQEncodeMessage() (*MessageOverRabbitMQ, error) {
 	panic("Unknown.RMQEncodeMessage() should never be called")
 }
 
-func (u *Unknown) RMQDecodeMessage(m MessageOverRabbitMQ) error {
+func (u *Unknown) RMQDecodeMessage(m *MessageOverRabbitMQ) error {
 	// we are not checking DataIdentifier here, as Unknown is a fallback type
 	// for any unrecognized message types, so we just accept whatever comes in
 	// and store the body, as is.
@@ -96,8 +96,8 @@ type RMQDataStorage interface {
 }
 
 type RMQSerializationOnWire interface {
-	RMQEncodeMessage() (MessageOverRabbitMQ, error)
-	RMQDecodeMessage(m MessageOverRabbitMQ) error
+	RMQEncodeMessage() (*MessageOverRabbitMQ, error)
+	RMQDecodeMessage(m *MessageOverRabbitMQ) error
 }
 
 var _ = []interface {

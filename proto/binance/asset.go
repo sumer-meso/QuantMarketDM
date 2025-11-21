@@ -124,11 +124,11 @@ func (au *AccountUpdate) RMQDataStoreIndex() string {
 	return "LocalTime:-1"
 }
 
-func (au *AccountUpdate) RMQEncodeMessage() (proto.MessageOverRabbitMQ, error) {
+func (au *AccountUpdate) RMQEncodeMessage() (*proto.MessageOverRabbitMQ, error) {
 	if body, err := json.Marshal(au); err != nil {
-		return proto.MessageOverRabbitMQ{}, err
+		return &proto.MessageOverRabbitMQ{}, err
 	} else {
-		return proto.MessageOverRabbitMQ{
+		return &proto.MessageOverRabbitMQ{
 			RoutingKey:     au.RMQRoutingIdentifier(),
 			DataIdentifier: au.RMQDataIdentifier(),
 			StoreTable:     au.RMQDataStoreTable(),
@@ -138,7 +138,7 @@ func (au *AccountUpdate) RMQEncodeMessage() (proto.MessageOverRabbitMQ, error) {
 	}
 }
 
-func (au *AccountUpdate) RMQDecodeMessage(m proto.MessageOverRabbitMQ) error {
+func (au *AccountUpdate) RMQDecodeMessage(m *proto.MessageOverRabbitMQ) error {
 	if m.DataIdentifier != au.RMQDataIdentifier() {
 		return NotMatchError{Expected: au.RMQDataIdentifier(), Actual: m.DataIdentifier}
 	}
@@ -222,11 +222,11 @@ func (ou *OrderUpdate) RMQDataStoreIndex() string {
 	return "LocalTime:-1"
 }
 
-func (ou *OrderUpdate) RMQEncodeMessage() (proto.MessageOverRabbitMQ, error) {
+func (ou *OrderUpdate) RMQEncodeMessage() (*proto.MessageOverRabbitMQ, error) {
 	if body, err := json.Marshal(ou); err != nil {
-		return proto.MessageOverRabbitMQ{}, err
+		return &proto.MessageOverRabbitMQ{}, err
 	} else {
-		return proto.MessageOverRabbitMQ{
+		return &proto.MessageOverRabbitMQ{
 			RoutingKey:     ou.RMQRoutingIdentifier(),
 			DataIdentifier: ou.RMQDataIdentifier(),
 			StoreTable:     ou.RMQDataStoreTable(),
@@ -236,7 +236,7 @@ func (ou *OrderUpdate) RMQEncodeMessage() (proto.MessageOverRabbitMQ, error) {
 	}
 }
 
-func (ou *OrderUpdate) RMQDecodeMessage(m proto.MessageOverRabbitMQ) error {
+func (ou *OrderUpdate) RMQDecodeMessage(m *proto.MessageOverRabbitMQ) error {
 	if m.DataIdentifier != ou.RMQDataIdentifier() {
 		return NotMatchError{Expected: ou.RMQDataIdentifier(), Actual: m.DataIdentifier}
 	}
@@ -304,11 +304,11 @@ func (tl *TradeLite) RMQDataStoreIndex() string {
 	return "LocalTime:-1;TradeID:-1"
 }
 
-func (tl *TradeLite) RMQEncodeMessage() (proto.MessageOverRabbitMQ, error) {
+func (tl *TradeLite) RMQEncodeMessage() (*proto.MessageOverRabbitMQ, error) {
 	if body, err := json.Marshal(tl); err != nil {
-		return proto.MessageOverRabbitMQ{}, err
+		return &proto.MessageOverRabbitMQ{}, err
 	} else {
-		return proto.MessageOverRabbitMQ{
+		return &proto.MessageOverRabbitMQ{
 			RoutingKey:     tl.RMQRoutingIdentifier(),
 			DataIdentifier: tl.RMQDataIdentifier(),
 			StoreTable:     tl.RMQDataStoreTable(),
@@ -318,7 +318,7 @@ func (tl *TradeLite) RMQEncodeMessage() (proto.MessageOverRabbitMQ, error) {
 	}
 }
 
-func (tl *TradeLite) RMQDecodeMessage(m proto.MessageOverRabbitMQ) error {
+func (tl *TradeLite) RMQDecodeMessage(m *proto.MessageOverRabbitMQ) error {
 	if m.DataIdentifier != tl.RMQDataIdentifier() {
 		return NotMatchError{Expected: tl.RMQDataIdentifier(), Actual: m.DataIdentifier}
 	}

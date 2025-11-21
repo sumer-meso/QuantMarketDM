@@ -82,11 +82,11 @@ func (ob *OrderBook) RMQDataStoreIndex() string {
 	return "Time:-1,LocalTime:-1"
 }
 
-func (ob *OrderBook) RMQEncodeMessage() (proto.MessageOverRabbitMQ, error) {
+func (ob *OrderBook) RMQEncodeMessage() (*proto.MessageOverRabbitMQ, error) {
 	if body, err := json.Marshal(ob); err != nil {
-		return proto.MessageOverRabbitMQ{}, err
+		return &proto.MessageOverRabbitMQ{}, err
 	} else {
-		return proto.MessageOverRabbitMQ{
+		return &proto.MessageOverRabbitMQ{
 			RoutingKey:     ob.RMQRoutingIdentifier(),
 			DataIdentifier: ob.RMQDataIdentifier(),
 			StoreTable:     ob.RMQDataStoreTable(),
@@ -96,7 +96,7 @@ func (ob *OrderBook) RMQEncodeMessage() (proto.MessageOverRabbitMQ, error) {
 	}
 }
 
-func (ob *OrderBook) RMQDecodeMessage(m proto.MessageOverRabbitMQ) error {
+func (ob *OrderBook) RMQDecodeMessage(m *proto.MessageOverRabbitMQ) error {
 	if m.DataIdentifier != ob.RMQDataIdentifier() {
 		return NotMatchError{Expected: ob.RMQDataIdentifier(), Actual: m.DataIdentifier}
 	}
