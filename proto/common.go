@@ -10,6 +10,9 @@ const HeaderKeyType = "x-tide-type"
 const HeaderKeyTable = "x-tide-table"
 const HeaderKeyIndex = "x-tide-index"
 
+const UnknownDataIdentifier = "tide.unknown"
+const UnknownRoutingIdentifier = "tide.proto.unknown"
+
 const defaultMsgTTLInQueue = "20000"
 
 type MessageOverRabbitMQ struct {
@@ -37,6 +40,7 @@ func (m *MessageOverRabbitMQ) PublishOnWire(ctx context.Context, ch *amqp.Channe
 }
 
 func (m *MessageOverRabbitMQ) RetrieveFromWire(ctx context.Context, del *amqp.Delivery) error {
+	m.DataIdentifier = UnknownDataIdentifier
 	if v, ok := del.Headers[HeaderKeyType]; ok {
 		if s, ok := v.(string); ok {
 			m.DataIdentifier = s
@@ -63,11 +67,11 @@ type Unknown struct {
 }
 
 func (u *Unknown) RMQRoutingIdentifier() string {
-	return "tide.proto.unknown"
+	return UnknownRoutingIdentifier
 }
 
 func (u *Unknown) RMQDataIdentifier() string {
-	return "tide.unknown"
+	return UnknownDataIdentifier
 }
 
 func (u *Unknown) RMQEncodeMessage() (*MessageOverRabbitMQ, error) {
