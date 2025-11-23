@@ -26,7 +26,10 @@ type Trade struct {
 	Timestamp          int64    `json:"timestamp"`
 	TradeID            string   `json:"trade_id"`
 	TradeSeq           int64    `json:"trade_seq"`
-	LocalTime          string   `json:"localTime"` // 本地时间戳
+	LocalTime          string   `json:"localTime"`          // 本地时间戳
+	Kind               *string  `json:"kind,omitempty"`     // 标识
+	Currency           *string  `json:"currency,omitempty"` // 货币标识
+	Interval           *string  `json:"interval,omitempty"` // 时间间隔
 }
 
 func (t *Trade) String() string {
@@ -35,7 +38,7 @@ func (t *Trade) String() string {
 }
 
 func (t *Trade) RMQRoutingIdentifier() string {
-	return "deribit.trades.{kind}.{currency}.{interval}"
+	return fmt.Sprintf("deribit.trades.%s.%s.%s", *t.Kind, *t.Currency, *t.Interval)
 }
 
 func (t *Trade) RMQDataIdentifier() string {
@@ -43,7 +46,7 @@ func (t *Trade) RMQDataIdentifier() string {
 }
 
 func (t *Trade) RMQDataStoreTable() string {
-	return "deribit.trades.{kind}.{currency}"
+	return fmt.Sprintf("deribit.trades.%s.%s", *t.Kind, *t.Currency)
 }
 
 func (t *Trade) RMQDataStoreIndex() string {

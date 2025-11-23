@@ -2,6 +2,7 @@ package deribit
 
 import (
 	"encoding/json"
+	"fmt"
 
 	"github.com/sumer-meso/QuantMarketDM/proto"
 )
@@ -44,15 +45,17 @@ type OrderBook struct {
 		Theta float64 `json:"theta"` // Theta值，时间衰减
 		Vega  float64 `json:"vega"`  // Vega值，波动率敏感度
 	} `json:"greeks"` // 希腊字母（期权风险指标）
-	BidIV            float64 `json:"bid_iv"`            // 买价隐含波动率
-	AskIV            float64 `json:"ask_iv"`            // 卖价隐含波动率
-	LastPrice24h     float64 `json:"last_price_24h"`    // 24小时前的价格
-	UsdIndexPrice    float64 `json:"usd_index_price"`   // USD指数价格
-	BaseCurrency     string  `json:"base_currency"`     // 基础货币，如 "BTC"
-	QuoteCurrency    string  `json:"quote_currency"`    // 计价货币，如 "USD"
-	InstrumentType   string  `json:"instrument_type"`   // 合约类型："future", "option", "spot"
-	MinTradeAmount   float64 `json:"min_trade_amount"`  // 最小交易数量
-	SettlementPeriod string  `json:"settlement_period"` // 结算周期
+	BidIV            float64 `json:"bid_iv"`             // 买价隐含波动率
+	AskIV            float64 `json:"ask_iv"`             // 卖价隐含波动率
+	LastPrice24h     float64 `json:"last_price_24h"`     // 24小时前的价格
+	UsdIndexPrice    float64 `json:"usd_index_price"`    // USD指数价格
+	BaseCurrency     string  `json:"base_currency"`      // 基础货币，如 "BTC"
+	QuoteCurrency    string  `json:"quote_currency"`     // 计价货币，如 "USD"
+	InstrumentType   string  `json:"instrument_type"`    // 合约类型："future", "option", "spot"
+	MinTradeAmount   float64 `json:"min_trade_amount"`   // 最小交易数量
+	SettlementPeriod string  `json:"settlement_period"`  // 结算周期
+	LocalTime        string  `json:"localTime"`          // 本地时间戳
+	Currency         *string `json:"currency,omitempty"` // 货币标识
 }
 
 func (ob *OrderBook) String() string {
@@ -60,7 +63,7 @@ func (ob *OrderBook) String() string {
 }
 
 func (ob *OrderBook) RMQRoutingIdentifier() string {
-	return "deribit.orderbook.{currency}"
+	return fmt.Sprintf("deribit.orderbook.%s", *ob.Currency)
 }
 
 func (ob *OrderBook) RMQDataIdentifier() string {
@@ -68,7 +71,7 @@ func (ob *OrderBook) RMQDataIdentifier() string {
 }
 
 func (ob *OrderBook) RMQDataStoreTable() string {
-	return "deribit.orderbook.{currency}"
+	return fmt.Sprintf("deribit.orderbook.%s", *ob.Currency)
 }
 
 func (ob *OrderBook) RMQDataStoreIndex() string {

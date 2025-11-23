@@ -65,7 +65,11 @@ type Trade struct {
 	RiskReducing     *bool             `json:"risk_reducing,omitempty"`
 	InstrumentName   string            `json:"instrument_name"`
 	Legs             []ComboTradeLeg   `json:"legs,omitempty"`
-	LocalTime        string            `json:"localTime"` // 本地时间戳
+	LocalTime        string            `json:"localTime"`          // 本地时间戳
+	Account          *string           `json:"account,omitempty"`  // 账户标识
+	Kind             *string           `json:"king,omitempty"`     // 标识
+	Currency         *string           `json:"currency,omitempty"` // 货币标识
+	Interval         *string           `json:"interval,omitempty"` // 时间间隔
 }
 
 func (t *Trade) String() string {
@@ -74,7 +78,7 @@ func (t *Trade) String() string {
 }
 
 func (t *Trade) RMQRoutingIdentifier() string {
-	return "deribit.{account}.changes.{kind}.{currency}.{interval}"
+	return fmt.Sprintf("deribit.%s.changes.%s.%s.%s", *t.Account, *t.Kind, *t.Currency, *t.Interval)
 }
 
 func (t *Trade) RMQDataIdentifier() string {

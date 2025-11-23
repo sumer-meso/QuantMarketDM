@@ -50,7 +50,8 @@ type Portfolio struct {
 	OptionsGamma                 float64            `json:"options_gamma"`
 	TotalEquityUSD               *float64           `json:"total_equity_usd,omitempty"`
 	DeltaTotal                   float64            `json:"delta_total"`
-	LocalTime                    string             `json:"localTime"` // 本地时间戳
+	LocalTime                    string             `json:"localTime"`         // 本地时间戳
+	Account                      *string            `json:"account,omitempty"` // 账户标识
 }
 
 func (p *Portfolio) String() string {
@@ -59,7 +60,7 @@ func (p *Portfolio) String() string {
 }
 
 func (p *Portfolio) RMQRoutingIdentifier() string {
-	return fmt.Sprintf("deribit.{account}.portfolio.%s", p.Currency)
+	return fmt.Sprintf("deribit.%s.portfolio.%s", *p.Account, p.Currency)
 }
 
 func (p *Portfolio) RMQDataIdentifier() string {

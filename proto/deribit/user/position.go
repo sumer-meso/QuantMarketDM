@@ -31,8 +31,10 @@ type Position struct {
 	Theta                 *float64 `json:"theta,omitempty"`
 	TotalProfitLoss       float64  `json:"total_profit_loss"`
 	Vega                  *float64 `json:"vega,omitempty"`
-	Parastamp             int64    `json:"parastamp"` // 到达时间戳/index
-	LocalTime             string   `json:"localTime"` // 本地时间戳
+	Parastamp             int64    `json:"parastamp"`          // 到达时间戳/index
+	LocalTime             string   `json:"localTime"`          // 本地时间戳
+	Account               *string  `json:"account,omitempty"`  // 账户标识
+	Currency              *string  `json:"currency,omitempty"` // 货币标识
 }
 
 func (p *Position) String() string {
@@ -42,7 +44,7 @@ func (p *Position) String() string {
 }
 
 func (p *Position) RMQRoutingIdentifier() string {
-	return "deribit.{account}.position.{currency}"
+	return fmt.Sprintf("deribit.%s.position.%s", *p.Account, *p.Currency)
 }
 
 func (p *Position) RMQDataIdentifier() string {

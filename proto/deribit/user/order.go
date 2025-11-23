@@ -60,7 +60,8 @@ type Order struct {
 	InstrumentName        string   `json:"instrument_name"`
 	TriggerFillCondition  *string  `json:"trigger_fill_condition,omitempty"`
 	PrimaryOrderID        *string  `json:"primary_order_id,omitempty"`
-	LocalTime             string   `json:"localTime"` // 本地时间戳
+	LocalTime             string   `json:"localTime"`         // 本地时间戳
+	Account               *string  `json:"account,omitempty"` // 账户标识
 }
 
 func (o *Order) String() string {
@@ -69,7 +70,7 @@ func (o *Order) String() string {
 }
 
 func (o *Order) RMQRoutingIdentifier() string {
-	return fmt.Sprintf("deribit.{account}.order.%s", o.InstrumentName)
+	return fmt.Sprintf("deribit.%s.order.%s", *o.Account, o.InstrumentName)
 }
 
 func (o *Order) RMQDataIdentifier() string {
