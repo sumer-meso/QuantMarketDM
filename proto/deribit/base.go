@@ -14,4 +14,6 @@ var _ = []interface {
 	(*user.Position)(nil),
 	(*user.Order)(nil),
 	(*user.Trade)(nil),
+	(*OrderBook)(nil),
+	(*Trade)(nil),
 }

@@ -5,6 +5,7 @@ import (
 
 	"github.com/sumer-meso/QuantMarketDM/proto"
 	"github.com/sumer-meso/QuantMarketDM/proto/binance"
+	"github.com/sumer-meso/QuantMarketDM/proto/deribit"
 	"github.com/sumer-meso/QuantMarketDM/proto/deribit/user"
 )
 
@@ -26,7 +27,10 @@ type BNDataSink interface {
 
 // For deribit data sink, implement DBDataSink from when consuming these data types.
 type DBDataSink interface {
-	OnDBPortfolio(ctx context.Context, t *user.Portfolio) error
-	OnDBPosition(ctx context.Context, t *user.Position) error
-	OnDBOrder(ctx context.Context, t *user.Order) error
+	OnDBUserPortfolio(ctx context.Context, t *user.Portfolio) error
+	OnDBUserPosition(ctx context.Context, t *user.Position) error
+	OnDBUserOrder(ctx context.Context, t *user.Order) error
+	OnDBUserTrade(ctx context.Context, t *user.Trade) error
+	OnDBOrderBook(ctx context.Context, ob *deribit.OrderBook) error
+	OnDBTrade(ctx context.Context, t *deribit.Trade) error
 }
