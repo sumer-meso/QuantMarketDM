@@ -98,7 +98,7 @@ func (ob *OrderBook) RMQEncodeMessage() (*proto.MessageOverRabbitMQ, error) {
 
 func (ob *OrderBook) RMQDecodeMessage(m *proto.MessageOverRabbitMQ) error {
 	if m.DataIdentifier != ob.RMQDataIdentifier() {
-		return NotMatchError{Expected: ob.RMQDataIdentifier(), Actual: m.DataIdentifier}
+		return proto.NotMatchError{Expected: ob.RMQDataIdentifier(), Actual: m.DataIdentifier}
 	}
 	return json.Unmarshal(m.Body, ob)
 }

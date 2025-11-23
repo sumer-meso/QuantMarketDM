@@ -1,8 +1,6 @@
 package binance
 
 import (
-	"fmt"
-
 	"github.com/sumer-meso/QuantMarketDM/proto"
 )
 
@@ -19,15 +17,6 @@ type EventBase struct {
 type LocalBase struct {
 	LocalTime int64
 	Source    string
-}
-
-type NotMatchError struct {
-	Expected string // e.g., "orderbook"
-	Actual   string // e.g., "trade"
-}
-
-func (e NotMatchError) Error() string {
-	return fmt.Sprintf("data identifier not match, expected: %s, actual: %s", e.Expected, e.Actual)
 }
 
 var _ = []interface {

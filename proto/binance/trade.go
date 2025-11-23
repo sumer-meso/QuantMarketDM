@@ -55,7 +55,7 @@ func (t *Trade) RMQEncodeMessage() (*proto.MessageOverRabbitMQ, error) {
 
 func (t *Trade) RMQDecodeMessage(m *proto.MessageOverRabbitMQ) error {
 	if m.DataIdentifier != t.RMQDataIdentifier() {
-		return NotMatchError{Expected: t.RMQDataIdentifier(), Actual: m.DataIdentifier}
+		return proto.NotMatchError{Expected: t.RMQDataIdentifier(), Actual: m.DataIdentifier}
 	}
 	return json.Unmarshal(m.Body, t)
 }

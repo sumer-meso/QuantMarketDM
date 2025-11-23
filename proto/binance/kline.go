@@ -67,7 +67,7 @@ func (k *Kline) RMQEncodeMessage() (*proto.MessageOverRabbitMQ, error) {
 
 func (k *Kline) RMQDecodeMessage(m *proto.MessageOverRabbitMQ) error {
 	if m.DataIdentifier != k.RMQDataIdentifier() {
-		return NotMatchError{Expected: k.RMQDataIdentifier(), Actual: m.DataIdentifier}
+		return proto.NotMatchError{Expected: k.RMQDataIdentifier(), Actual: m.DataIdentifier}
 	}
 	return json.Unmarshal(m.Body, k)
 }

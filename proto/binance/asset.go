@@ -140,7 +140,7 @@ func (au *AccountUpdate) RMQEncodeMessage() (*proto.MessageOverRabbitMQ, error) 
 
 func (au *AccountUpdate) RMQDecodeMessage(m *proto.MessageOverRabbitMQ) error {
 	if m.DataIdentifier != au.RMQDataIdentifier() {
-		return NotMatchError{Expected: au.RMQDataIdentifier(), Actual: m.DataIdentifier}
+		return proto.NotMatchError{Expected: au.RMQDataIdentifier(), Actual: m.DataIdentifier}
 	}
 	return json.Unmarshal(m.Body, au)
 }
@@ -238,7 +238,7 @@ func (ou *OrderUpdate) RMQEncodeMessage() (*proto.MessageOverRabbitMQ, error) {
 
 func (ou *OrderUpdate) RMQDecodeMessage(m *proto.MessageOverRabbitMQ) error {
 	if m.DataIdentifier != ou.RMQDataIdentifier() {
-		return NotMatchError{Expected: ou.RMQDataIdentifier(), Actual: m.DataIdentifier}
+		return proto.NotMatchError{Expected: ou.RMQDataIdentifier(), Actual: m.DataIdentifier}
 	}
 	return json.Unmarshal(m.Body, ou)
 }
@@ -320,7 +320,7 @@ func (tl *TradeLite) RMQEncodeMessage() (*proto.MessageOverRabbitMQ, error) {
 
 func (tl *TradeLite) RMQDecodeMessage(m *proto.MessageOverRabbitMQ) error {
 	if m.DataIdentifier != tl.RMQDataIdentifier() {
-		return NotMatchError{Expected: tl.RMQDataIdentifier(), Actual: m.DataIdentifier}
+		return proto.NotMatchError{Expected: tl.RMQDataIdentifier(), Actual: m.DataIdentifier}
 	}
 	return json.Unmarshal(m.Body, tl)
 }

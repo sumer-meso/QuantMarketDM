@@ -2,6 +2,7 @@ package proto
 
 import (
 	"context"
+	"fmt"
 
 	amqp "github.com/rabbitmq/amqp091-go"
 )
@@ -109,4 +110,13 @@ var _ = []interface {
 	RMQSerializationOnWire
 }{
 	(*Unknown)(nil),
+}
+
+type NotMatchError struct {
+	Expected string // e.g., "orderbook"
+	Actual   string // e.g., "trade"
+}
+
+func (e NotMatchError) Error() string {
+	return fmt.Sprintf("data identifier not match, expected: %s, actual: %s", e.Expected, e.Actual)
 }
