@@ -22,14 +22,14 @@ type TrueRangeRatio struct {
 type Kline struct {
 	Symbol          string
 	TrueRangeRatios map[string]TrueRangeRatio
-	Volumns         map[string]float64
+	Volumes         map[string]float64
 	LocalTime       int64
 	Source          string
 }
 
 func (k *Kline) String() string {
 	return fmt.Sprintf("Kline (%s), t:%v, v:%v, s:%s, l:%d",
-		k.Symbol, k.TrueRangeRatios, k.Volumns, k.Source, k.LocalTime)
+		k.Symbol, k.TrueRangeRatios, k.Volumes, k.Source, k.LocalTime)
 }
 
 func (k *Kline) RMQRoutingIdentifier() string {
