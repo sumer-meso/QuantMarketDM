@@ -63,7 +63,7 @@ func (ob *OrderBook) String() string {
 }
 
 func (ob *OrderBook) RMQRoutingIdentifier() string {
-	return fmt.Sprintf("deribit.orderbook.%v", *ob.Currency)
+	return fmt.Sprintf("deribit.orderbook.%v", ob.Currency)
 }
 
 func (ob *OrderBook) RMQDataIdentifier() string {
