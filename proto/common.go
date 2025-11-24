@@ -130,14 +130,34 @@ func (e NotMatchError) Error() string {
 	return fmt.Sprintf("data identifier not match, expected: %s, actual: %s", e.Expected, e.Actual)
 }
 
-func UnknownToKnownStruct[T RMQSerializationOnWire](unk *Unknown) (*T, error) {
+// UnknownToKnown converts an Unknown type to a known type T.
+// T must implement RMQSerializationOnWire and RMQIdentifier interfaces.
+// If the DataIdentifier in Unknown does not match the expected type T,
+// an error of type NotMatchError is returned.
+func UnknownToKnown[T any, PT interface {
+	*T
+	RMQSerializationOnWire
+	RMQIdentifier
+}](unk *Unknown) (T, error) {
 	var zero T
 	if unk == nil {
-		return nil, fmt.Errorf("input Unknown is nil")
+		return zero, fmt.Errorf("[UnknownToKnown] input Unknown is nil")
 	}
 
-	unkMsg, _ := unk.RMQEncodeMessage()
-	zero.RMQDecodeMessage(unkMsg)
+	v := PT(&zero)
 
-	return &zero, nil
+	unkMsg, err := unk.RMQEncodeMessage()
+	if err != nil {
+		return zero, fmt.Errorf("[UnknownToKnown] failed to encode Unknown message: %w", err)
+	}
+
+	// Set the DataIdentifier to match the target type.
+	// This ensures correct decoding, especially in polymorphic scenarios.
+	// But this is not encouraged for general use.
+	unkMsg.DataIdentifier = v.RMQDataIdentifier()
+	if err := v.RMQDecodeMessage(unkMsg); err != nil {
+		return zero, fmt.Errorf("[UnknownToKnown] failed to decode message: %w", err)
+	}
+
+	return zero, nil
 }
