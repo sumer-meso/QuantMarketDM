@@ -138,17 +138,17 @@ func UnknownToKnown[T any, PT interface {
 	*T
 	RMQSerializationOnWire
 	RMQIdentifier
-}](unk *Unknown) (T, error) {
+}](unk *Unknown) (*T, error) {
 	var zero T
 	if unk == nil {
-		return zero, fmt.Errorf("[UnknownToKnown] input Unknown is nil")
+		return nil, fmt.Errorf("[UnknownToKnown] input Unknown is nil")
 	}
 
 	v := PT(&zero)
 
 	unkMsg, err := unk.RMQEncodeMessage()
 	if err != nil {
-		return zero, fmt.Errorf("[UnknownToKnown] failed to encode Unknown message: %w", err)
+		return nil, fmt.Errorf("[UnknownToKnown] failed to encode Unknown message: %w", err)
 	}
 
 	// Set the DataIdentifier to match the target type.
@@ -156,8 +156,8 @@ func UnknownToKnown[T any, PT interface {
 	// But this is not encouraged for general use.
 	unkMsg.DataIdentifier = v.RMQDataIdentifier()
 	if err := v.RMQDecodeMessage(unkMsg); err != nil {
-		return zero, fmt.Errorf("[UnknownToKnown] failed to decode message: %w", err)
+		return nil, fmt.Errorf("[UnknownToKnown] failed to decode message: %w", err)
 	}
 
-	return zero, nil
+	return &zero, nil
 }
