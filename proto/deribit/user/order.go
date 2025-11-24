@@ -70,7 +70,7 @@ func (o *Order) String() string {
 }
 
 func (o *Order) RMQRoutingIdentifier() string {
-	return fmt.Sprintf("deribit.%s.order.%s", *o.Account, o.InstrumentName)
+	return fmt.Sprintf("deribit.%v.order.%s", *o.Account, o.InstrumentName)
 }
 
 func (o *Order) RMQDataIdentifier() string {

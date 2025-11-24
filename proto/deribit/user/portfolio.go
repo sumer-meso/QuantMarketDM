@@ -60,7 +60,7 @@ func (p *Portfolio) String() string {
 }
 
 func (p *Portfolio) RMQRoutingIdentifier() string {
-	return fmt.Sprintf("deribit.%s.portfolio.%s", *p.Account, p.Currency)
+	return fmt.Sprintf("deribit.%v.portfolio.%s", *p.Account, p.Currency)
 }
 
 func (p *Portfolio) RMQDataIdentifier() string {

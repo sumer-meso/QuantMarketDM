@@ -78,7 +78,7 @@ func (t *Trade) String() string {
 }
 
 func (t *Trade) RMQRoutingIdentifier() string {
-	return fmt.Sprintf("deribit.%s.changes.%s.%s.%s", *t.Account, *t.Kind, *t.Currency, *t.Interval)
+	return fmt.Sprintf("deribit.%v.changes.%v.%v.%v", *t.Account, *t.Kind, *t.Currency, *t.Interval)
 }
 
 func (t *Trade) RMQDataIdentifier() string {
