@@ -44,7 +44,7 @@ func (p *Position) String() string {
 }
 
 func (p *Position) RMQRoutingIdentifier() string {
-	return fmt.Sprintf("deribit.%v.position.%v", p.Account, p.Currency)
+	return fmt.Sprintf("deribit.%v.positions.%v", p.Account, p.Currency)
 }
 
 func (p *Position) RMQDataIdentifier() string {
