@@ -133,7 +133,10 @@ func (e NotMatchError) Error() string {
 // UnknownToKnown converts an Unknown type to a known type T.
 // T must implement RMQSerializationOnWire and RMQIdentifier interfaces.
 // If the DataIdentifier in Unknown does not match the expected type T,
-// an error of type NotMatchError is returned.
+// we forecefully set it to match T's DataIdentifier before decoding.
+// This is not encouraged for general use, as it may lead to unexpected behavior
+// if the underlying data does not actually match the expected type.
+// Use with caution.
 func UnknownToKnown[T any, PT interface {
 	*T
 	RMQSerializationOnWire
