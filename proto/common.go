@@ -76,7 +76,16 @@ func (u *Unknown) RMQDataIdentifier() string {
 }
 
 func (u *Unknown) RMQEncodeMessage() (*MessageOverRabbitMQ, error) {
-	panic("Unknown.RMQEncodeMessage() should never be called")
+	// The only reason we have this func here is to be used as we coverting to Known type.
+	// In normal usage, Unknown type should not be encoded back to RMQ message.
+	// since we keep using the body bytes pointer as is, so not much perf lost here.
+	return &MessageOverRabbitMQ{
+		RoutingKey:     u.RkFromRabbitMQ,
+		DataIdentifier: u.RMQDataIdentifier(),
+		StoreTable:     "N/A",
+		StoreIndex:     "N/A",
+		Body:           u.Body,
+	}, nil
 }
 
 func (u *Unknown) RMQDecodeMessage(m *MessageOverRabbitMQ) error {
@@ -119,4 +128,16 @@ type NotMatchError struct {
 
 func (e NotMatchError) Error() string {
 	return fmt.Sprintf("data identifier not match, expected: %s, actual: %s", e.Expected, e.Actual)
+}
+
+func UnknownToKnownStruct[T RMQSerializationOnWire](unk *Unknown) (*T, error) {
+	var zero T
+	if unk == nil {
+		return nil, fmt.Errorf("input Unknown is nil")
+	}
+
+	unkMsg, _ := unk.RMQEncodeMessage()
+	zero.RMQDecodeMessage(unkMsg)
+
+	return &zero, nil
 }
