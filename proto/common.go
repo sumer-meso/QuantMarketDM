@@ -121,6 +121,13 @@ var _ = []interface {
 	(*Unknown)(nil),
 }
 
+func PtrStr(s *string) string {
+	if s == nil {
+		return "<nil>"
+	}
+	return *s
+}
+
 type NotMatchError struct {
 	Expected string // e.g., "orderbook"
 	Actual   string // e.g., "trade"

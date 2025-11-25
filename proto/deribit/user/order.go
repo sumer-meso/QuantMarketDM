@@ -73,7 +73,13 @@ func (o *Order) String() string {
 }
 
 func (o *Order) RMQRoutingIdentifier() string {
-	return fmt.Sprintf("deribit.%v.orders.%v.%v.%v", o.Account, o.Kind, o.Currency, o.Interval)
+	return fmt.Sprintf(
+		"deribit.%s.orders.%s.%s.%s",
+		proto.PtrStr(o.Account),
+		proto.PtrStr(o.Kind),
+		proto.PtrStr(o.Currency),
+		proto.PtrStr(o.Interval),
+	)
 }
 
 func (o *Order) RMQDataIdentifier() string {
