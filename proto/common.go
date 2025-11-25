@@ -121,11 +121,11 @@ var _ = []interface {
 	(*Unknown)(nil),
 }
 
-func PtrStr(s *string) string {
-	if s == nil {
+func Ptr2Str[T any](v *T) string {
+	if v == nil {
 		return "<nil>"
 	}
-	return *s
+	return fmt.Sprintf("%v", *v)
 }
 
 type NotMatchError struct {

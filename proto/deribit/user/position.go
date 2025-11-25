@@ -44,7 +44,7 @@ func (p *Position) String() string {
 }
 
 func (p *Position) RMQRoutingIdentifier() string {
-	return fmt.Sprintf("deribit.%s.positions.%s", proto.PtrStr(p.Account), proto.PtrStr(p.Currency))
+	return fmt.Sprintf("deribit.%s.positions.%s", proto.Ptr2Str(p.Account), proto.Ptr2Str(p.Currency))
 }
 
 func (p *Position) RMQDataIdentifier() string {

@@ -68,17 +68,17 @@ type Order struct {
 }
 
 func (o *Order) String() string {
-	return fmt.Sprintf("Deribit Order (%s), dir:%s, amt:%.2f, fllAmt:%.2f, prc:%v, state:%s, lt:%s",
-		o.InstrumentName, o.Direction, o.Amount, o.FilledAmount, o.Price, o.OrderState, o.LocalTime)
+	return fmt.Sprintf("Deribit Order (%s), dir:%s, amt:%.2f, fllAmt:%.2f, prc:%s, state:%s, lt:%s, oid:%s",
+		o.InstrumentName, o.Direction, o.Amount, o.FilledAmount, proto.Ptr2Str(o.Price), o.OrderState, o.LocalTime, o.OrderID)
 }
 
 func (o *Order) RMQRoutingIdentifier() string {
 	return fmt.Sprintf(
 		"deribit.%s.orders.%s.%s.%s",
-		proto.PtrStr(o.Account),
-		proto.PtrStr(o.Kind),
-		proto.PtrStr(o.Currency),
-		proto.PtrStr(o.Interval),
+		proto.Ptr2Str(o.Account),
+		proto.Ptr2Str(o.Kind),
+		proto.Ptr2Str(o.Currency),
+		proto.Ptr2Str(o.Interval),
 	)
 }
 

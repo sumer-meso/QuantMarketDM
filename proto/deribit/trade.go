@@ -38,7 +38,7 @@ func (t *Trade) String() string {
 }
 
 func (t *Trade) RMQRoutingIdentifier() string {
-	return fmt.Sprintf("deribit.trades.%s.%s.%s", proto.PtrStr(t.Kind), proto.PtrStr(t.Currency), proto.PtrStr(t.Interval))
+	return fmt.Sprintf("deribit.trades.%s.%s.%s", proto.Ptr2Str(t.Kind), proto.Ptr2Str(t.Currency), proto.Ptr2Str(t.Interval))
 }
 
 func (t *Trade) RMQDataIdentifier() string {
@@ -46,7 +46,7 @@ func (t *Trade) RMQDataIdentifier() string {
 }
 
 func (t *Trade) RMQDataStoreTable() string {
-	return fmt.Sprintf("deribit.trades.%s.%s", proto.PtrStr(t.Kind), proto.PtrStr(t.Currency))
+	return fmt.Sprintf("deribit.trades.%s.%s", proto.Ptr2Str(t.Kind), proto.Ptr2Str(t.Currency))
 }
 
 func (t *Trade) RMQDataStoreIndex() string {

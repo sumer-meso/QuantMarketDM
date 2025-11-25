@@ -80,10 +80,10 @@ func (t *Trade) String() string {
 func (t *Trade) RMQRoutingIdentifier() string {
 	return fmt.Sprintf(
 		"deribit.%s.changes.%s.%s.%s",
-		proto.PtrStr(t.Account),
-		proto.PtrStr(t.Kind),
-		proto.PtrStr(t.Currency),
-		proto.PtrStr(t.Interval),
+		proto.Ptr2Str(t.Account),
+		proto.Ptr2Str(t.Kind),
+		proto.Ptr2Str(t.Currency),
+		proto.Ptr2Str(t.Interval),
 	)
 }
 
