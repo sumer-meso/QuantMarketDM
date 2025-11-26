@@ -31,7 +31,7 @@ type KlineLite struct {
 type KlineDetails struct {
 	Kline           KlineLite
 	TrueRangeRatios TrueRangeRatio
-	Volumes         float64
+	Volume          float64
 }
 
 // This is Kline model which is used to send out.
