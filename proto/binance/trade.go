@@ -36,7 +36,7 @@ func (k *Trade) RMQDataStoreTable() string {
 }
 
 func (k *Trade) RMQDataStoreIndex() string {
-	return "TradeTime:-1,LocalTime:-1"
+	return "LocalTime:-1,TradeTime:-1"
 }
 
 func (t *Trade) RMQEncodeMessage() (*proto.MessageOverRabbitMQ, error) {
