@@ -4,6 +4,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"path/filepath"
 
 	"gopkg.in/natefinch/lumberjack.v2"
 )
@@ -11,10 +12,11 @@ import (
 var IsVerbose = false
 var IsDebug = false
 
-func Init(base string) {
+func Init(base string, suffix string) {
+	execPath, _ := os.Executable()
 	// Setup lumberjack
 	logFile := &lumberjack.Logger{
-		Filename:   base + "/BinanceBuddy.log",
+		Filename:   base + "/" + filepath.Base(execPath) + "_" + suffix + ".log",
 		MaxSize:    200,
 		MaxBackups: 50,
 		MaxAge:     14,
