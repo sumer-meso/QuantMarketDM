@@ -13,15 +13,15 @@ type Consumer struct {
 	Queue       string
 	BufferSize  int
 	WorkerCount int
-	Handler     func(amqp.Delivery)
+	Handler     func(*amqp.Delivery)
 
-	msgChan chan amqp.Delivery
+	msgChan chan *amqp.Delivery
 }
 
 func (c *Client) NewConsumer(
 	ctx context.Context, queue string,
 	workerCount, buffer int,
-	handler func(amqp.Delivery),
+	handler func(*amqp.Delivery),
 ) *Consumer {
 
 	cons := &Consumer{
@@ -31,7 +31,7 @@ func (c *Client) NewConsumer(
 		WorkerCount: workerCount,
 		BufferSize:  buffer,
 		Handler:     handler,
-		msgChan:     make(chan amqp.Delivery, buffer),
+		msgChan:     make(chan *amqp.Delivery, buffer),
 	}
 
 	c.consumers = append(c.consumers, cons)
@@ -88,7 +88,7 @@ func (c *Consumer) recover() {
 					if !ok {
 						return
 					}
-					c.msgChan <- m
+					c.msgChan <- &m
 				}
 			}
 		}()
