@@ -24,20 +24,18 @@ type MessageOverRabbitMQ struct {
 	Body           []byte
 }
 
-func (m *MessageOverRabbitMQ) PublishOnWire(ctx context.Context, ch *amqp.Channel, exchange string) error {
-	return ch.PublishWithContext(ctx,
-		exchange, m.RoutingKey, false, false,
-		amqp.Publishing{
-			ContentType: "application/json",
-			Headers: amqp.Table{
-				HeaderKeyType:  m.DataIdentifier,
-				HeaderKeyTable: m.StoreTable,
-				HeaderKeyIndex: m.StoreIndex,
-			},
-			Expiration:   defaultMsgTTLInQueue,
-			DeliveryMode: amqp.Transient,
-			Body:         m.Body,
-		})
+func (m *MessageOverRabbitMQ) PublishInfoOnWire() amqp.Publishing {
+	return amqp.Publishing{
+		ContentType: "application/json",
+		Headers: amqp.Table{
+			HeaderKeyType:  m.DataIdentifier,
+			HeaderKeyTable: m.StoreTable,
+			HeaderKeyIndex: m.StoreIndex,
+		},
+		Expiration:   defaultMsgTTLInQueue,
+		DeliveryMode: amqp.Transient,
+		Body:         m.Body,
+	}
 }
 
 func (m *MessageOverRabbitMQ) RetrieveFromWire(ctx context.Context, del *amqp.Delivery) error {
