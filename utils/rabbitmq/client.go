@@ -25,8 +25,11 @@ type Client struct {
 
 func NewClient(ctx context.Context, cfg common.RabbitMQ) *Client {
 	c := &Client{
-		cfg: cfg,
-		ctx: ctx,
+		cfg:        cfg,
+		ctx:        ctx,
+		queues:     make(map[string][]string),
+		consumers:  make([]*Consumer, 0),
+		publishers: make([]*Publisher, 0),
 	}
 	go c.reconnectLoop()
 	return c
