@@ -19,7 +19,8 @@ type Client struct {
 	consumers  []*Consumer
 	publishers []*Publisher
 
-	queues map[string][]string
+	queues   map[string][]string
+	wgGlobal sync.WaitGroup
 }
 
 func NewClient(ctx context.Context, cfg common.RabbitMQ) *Client {
@@ -31,12 +32,24 @@ func NewClient(ctx context.Context, cfg common.RabbitMQ) *Client {
 	return c
 }
 
+// WaitAndClose waits for all goroutines to finish and closes the connection.
+func (c *Client) WaitAndClose() {
+	c.wgGlobal.Wait()
+	c.lock.Lock()
+	if c.conn != nil {
+		c.conn.Close()
+	}
+	c.lock.Unlock()
+}
+
 func (c *Client) rmqConnectStr() string {
 	return fmt.Sprintf("amqp://%s:%s@%s:%s", c.cfg.Username, c.cfg.Password, c.cfg.Host, c.cfg.Port)
 }
 
 func (c *Client) reconnectLoop() {
 	backoff := time.Second
+	c.wgGlobal.Add(1)
+	defer c.wgGlobal.Done()
 
 	for {
 		select {

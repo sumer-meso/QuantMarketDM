@@ -41,6 +41,8 @@ func (c *Client) NewConsumer(
 }
 
 func (c *Consumer) recover() {
+	c.client.wgGlobal.Add(1)
+	defer c.client.wgGlobal.Done()
 	for {
 		select {
 		case <-c.ctx.Done():
@@ -50,13 +52,13 @@ func (c *Consumer) recover() {
 
 		conn := c.client.getConn()
 		if conn == nil {
-			timeSleepSelect(c.ctx, 500)
+			timeSleepSelect(c.ctx, 100)
 			continue
 		}
 
 		ch, err := conn.Channel()
 		if err != nil {
-			timeSleepSelect(c.ctx, 500)
+			timeSleepSelect(c.ctx, 100)
 			continue
 		}
 
@@ -70,12 +72,14 @@ func (c *Consumer) recover() {
 
 		msgs, err := ch.Consume(c.Queue, "quant-market-rabbitmq", false, false, false, false, nil)
 		if err != nil {
-			timeSleepSelect(c.ctx, 500)
+			timeSleepSelect(c.ctx, 100)
 			continue
 		}
 
+		c.client.wgGlobal.Add(1)
 		// read-loop
 		go func() {
+			defer c.client.wgGlobal.Done()
 			for {
 				select {
 				case <-c.ctx.Done():
@@ -89,9 +93,11 @@ func (c *Consumer) recover() {
 			}
 		}()
 
+		c.client.wgGlobal.Add(c.WorkerCount)
 		// worker pool
 		for i := 0; i < c.WorkerCount; i++ {
 			go func() {
+				defer c.client.wgGlobal.Done()
 				for {
 					select {
 					case <-c.ctx.Done():

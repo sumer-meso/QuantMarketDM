@@ -25,6 +25,8 @@ func (c *Client) NewPublisher(ctx context.Context, exchange string) *Publisher {
 }
 
 func (p *Publisher) recover() {
+	p.client.wgGlobal.Add(1)
+	defer p.client.wgGlobal.Done()
 	for {
 		select {
 		case <-p.ctx.Done():
