@@ -23,7 +23,7 @@ type Client struct {
 	wgGlobal sync.WaitGroup
 }
 
-func NewClient(ctx context.Context, cfg common.RabbitMQ) *Client {
+func NewClient(ctx context.Context, cfg common.RabbitMQ) (*Client, error) {
 	c := &Client{
 		cfg:        cfg,
 		ctx:        ctx,
@@ -31,8 +31,15 @@ func NewClient(ctx context.Context, cfg common.RabbitMQ) *Client {
 		consumers:  make([]*Consumer, 0),
 		publishers: make([]*Publisher, 0),
 	}
+
+	conn, err := c.connectWithRetry()
+	if err != nil {
+		return nil, err
+	}
+	c.setConn(conn)
+
 	go c.reconnectLoop()
-	return c
+	return c, nil
 }
 
 // WaitAndClose waits for all goroutines to finish and closes the connection.
@@ -49,43 +56,72 @@ func (c *Client) rmqConnectStr() string {
 	return fmt.Sprintf("amqp://%s:%s@%s:%s", c.cfg.Username, c.cfg.Password, c.cfg.Host, c.cfg.Port)
 }
 
-func (c *Client) reconnectLoop() {
+func (c *Client) connectWithRetry() (*amqp.Connection, error) {
 	backoff := time.Second
-	c.wgGlobal.Add(1)
-	defer c.wgGlobal.Done()
 
 	for {
 		select {
 		case <-c.ctx.Done():
-			return
+			return nil, c.ctx.Err()
 		default:
 		}
 
 		conn, err := amqp.Dial(c.rmqConnectStr())
-		if err != nil {
-			logging.Logf("[RabbitMq][Client] connect failed: %v", err)
-			time.Sleep(backoff)
-			backoff = min(backoff*2, 30*time.Second)
+		if err == nil {
+			logging.Logf("[RabbitMq][Client] connect OK")
+			return conn, nil
+		}
+
+		logging.Logf("[RabbitMq][Client] connect failed: %v", err)
+
+		select {
+		case <-c.ctx.Done():
+			return nil, c.ctx.Err()
+		case <-time.After(backoff):
+		}
+
+		if backoff < 30*time.Second {
+			backoff *= 2
+		}
+	}
+}
+
+func (c *Client) reconnectLoop() {
+	c.wgGlobal.Add(1)
+	defer c.wgGlobal.Done()
+
+	for {
+
+		conn := c.getConn()
+		if conn == nil {
+			newConn, err := c.connectWithRetry()
+			if err != nil {
+				return
+			}
+			c.setConn(newConn)
+			c.recoverAll()
 			continue
 		}
 
-		backoff = time.Second
+		notify := conn.NotifyClose(make(chan *amqp.Error, 1))
 
-		c.lock.Lock()
-		c.conn = conn
-		c.lock.Unlock()
-
-		logging.Logf("[RabbitMq][Client] Connected")
-
-		c.recoverAll()
-
-		notify := conn.NotifyClose(make(chan *amqp.Error))
 		select {
-		case closeErr := <-notify:
-			logging.Logf("[AMQP] Connection lost: %v", closeErr)
 		case <-c.ctx.Done():
 			return
+		case err, ok := <-notify:
+			if !ok {
+				logging.Logf("[RabbitMq][Client] connection closed (no error)")
+			} else {
+				logging.Logf("[RabbitMq][Client] connection lost: %v", err)
+			}
 		}
+
+		newConn, err := c.connectWithRetry()
+		if err != nil {
+			return // ctx 已经被 cancel 之类的
+		}
+		c.setConn(newConn)
+		c.recoverAll()
 	}
 }
 
@@ -106,6 +142,12 @@ func min(a, b time.Duration) time.Duration {
 		return a
 	}
 	return b
+}
+
+func (c *Client) setConn(conn *amqp.Connection) {
+	c.lock.Lock()
+	defer c.lock.Unlock()
+	c.conn = conn
 }
 
 func (c *Client) getConn() *amqp.Connection {
