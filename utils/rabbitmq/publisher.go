@@ -4,6 +4,7 @@ import (
 	"context"
 
 	amqp "github.com/rabbitmq/amqp091-go"
+	"github.com/sumer-meso/QuantMarketDM/utils/logging"
 )
 
 type Publisher struct {
@@ -30,6 +31,7 @@ func (p *Publisher) recover() {
 	for {
 		select {
 		case <-p.ctx.Done():
+			logging.Logf("[RabbitMq][Publisher] ctx cancelled outside. recover closing.")
 			return
 		default:
 		}
@@ -59,6 +61,7 @@ func (p *Publisher) Publish(rk string, info amqp.Publishing) error {
 	for {
 		select {
 		case <-p.ctx.Done():
+			logging.Logf("[RabbitMq][Publisher] ctx cancelled outside. Publish closing.")
 			return context.Canceled
 		default:
 		}

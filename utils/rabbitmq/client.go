@@ -62,6 +62,7 @@ func (c *Client) connectWithRetry() (*amqp.Connection, error) {
 	for {
 		select {
 		case <-c.ctx.Done():
+			logging.Logf("[RabbitMq][Client] ctx cancelled outside. connectWithRetry1 closing.")
 			return nil, c.ctx.Err()
 		default:
 		}
@@ -76,6 +77,7 @@ func (c *Client) connectWithRetry() (*amqp.Connection, error) {
 
 		select {
 		case <-c.ctx.Done():
+			logging.Logf("[RabbitMq][Client] ctx cancelled outside. connectWithRetry2 closing.")
 			return nil, c.ctx.Err()
 		case <-time.After(backoff):
 		}
@@ -107,6 +109,7 @@ func (c *Client) reconnectLoop() {
 
 		select {
 		case <-c.ctx.Done():
+			logging.Logf("[RabbitMq][Client] ctx cancelled outside. reconnectLoop closing.")
 			return
 		case err, ok := <-notify:
 			if !ok {

@@ -4,6 +4,7 @@ import (
 	"context"
 
 	amqp "github.com/rabbitmq/amqp091-go"
+	"github.com/sumer-meso/QuantMarketDM/utils/logging"
 )
 
 type Consumer struct {
@@ -45,6 +46,7 @@ func (c *Consumer) recover() {
 	for {
 		select {
 		case <-c.ctx.Done():
+			logging.Logf("[RabbitMq][Consumer] ctx cancelled outside. recover closing.")
 			return
 		default:
 		}
@@ -76,6 +78,7 @@ func (c *Consumer) recover() {
 			for {
 				select {
 				case <-c.ctx.Done():
+					logging.Logf("[RabbitMq][Consumer] ctx cancelled outside. read-loop closing.")
 					return
 				case m, ok := <-msgs:
 					if !ok {
@@ -89,17 +92,18 @@ func (c *Consumer) recover() {
 		c.client.wgGlobal.Add(c.WorkerCount)
 		// worker pool
 		for i := 0; i < c.WorkerCount; i++ {
-			go func() {
+			go func(idx int) {
 				defer c.client.wgGlobal.Done()
 				for {
 					select {
 					case <-c.ctx.Done():
+						logging.Logf("[RabbitMq][Consumer] ctx cancelled outside. WorkerCount %d closing.", idx)
 						return
 					case msg := <-c.msgChan:
 						c.Handler(msg)
 					}
 				}
-			}()
+			}(i)
 		}
 
 		return
