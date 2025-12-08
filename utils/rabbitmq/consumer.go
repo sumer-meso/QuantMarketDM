@@ -63,7 +63,7 @@ func (c *Consumer) recover() {
 
 		ch.Qos(2000, 0, false)
 
-		msgs, err := ch.Consume(c.Queue, "quant-market-rabbitmq", false, false, false, false, nil)
+		msgs, err := ch.Consume(c.Queue, "quant-market-rabbitmq", true, false, false, false, nil)
 		if err != nil {
 			timeSleepSelect(c.ctx, 100)
 			continue
