@@ -137,13 +137,6 @@ func (c *Client) recoverAll() {
 	}
 }
 
-func min(a, b time.Duration) time.Duration {
-	if a < b {
-		return a
-	}
-	return b
-}
-
 func (c *Client) setConn(conn *amqp.Connection) {
 	c.lock.Lock()
 	defer c.lock.Unlock()

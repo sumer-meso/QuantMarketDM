@@ -4,7 +4,6 @@ import (
 	"context"
 
 	amqp "github.com/rabbitmq/amqp091-go"
-	"github.com/sumer-meso/QuantMarketDM/utils/logging"
 )
 
 type Consumer struct {
@@ -60,12 +59,6 @@ func (c *Consumer) recover() {
 		if err != nil {
 			timeSleepSelect(c.ctx, 100)
 			continue
-		}
-
-		_, err = ch.QueueDeclare(c.Queue, true, false, false, false, nil)
-		if err != nil {
-			logging.Logf("[RabbitMq][Consumer] queue declare error: %v", err)
-			return
 		}
 
 		ch.Qos(2000, 0, false)
