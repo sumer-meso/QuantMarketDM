@@ -98,12 +98,12 @@ func (u *Unknown) RMQDecodeMessage(m *MessageOverRabbitMQ) error {
 }
 
 type UnknownHandler interface {
-	HandleDBOrder(*Unknown) Routable
+	HandleUnknown(*Unknown) Routable
 }
 
 func (u *Unknown) DispatchTo(target any) Routable {
 	if h, ok := target.(UnknownHandler); ok {
-		return h.HandleDBOrder(u)
+		return h.HandleUnknown(u)
 	}
 	return nil
 }
