@@ -114,3 +114,14 @@ func (o *Order) RMQDecodeMessage(m *proto.MessageOverRabbitMQ) error {
 	}
 	return json.Unmarshal(m.Body, o)
 }
+
+type OrderHandler interface {
+	TideHandleDBOrder(*Order) proto.TideRoutable
+}
+
+func (o *Order) TideDispatch(target any) proto.TideRoutable {
+	if h, ok := target.(OrderHandler); ok {
+		return h.TideHandleDBOrder(o)
+	}
+	return nil
+}

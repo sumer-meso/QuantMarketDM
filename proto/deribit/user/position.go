@@ -79,3 +79,14 @@ func (p *Position) RMQDecodeMessage(m *proto.MessageOverRabbitMQ) error {
 	}
 	return json.Unmarshal(m.Body, p)
 }
+
+type PositionHandler interface {
+	TideHandleDBPosition(*Position) proto.TideRoutable
+}
+
+func (p *Position) TideDispatch(target any) proto.TideRoutable {
+	if h, ok := target.(PositionHandler); ok {
+		return h.TideHandleDBPosition(p)
+	}
+	return nil
+}

@@ -60,6 +60,17 @@ func (t *Trade) RMQDecodeMessage(m *proto.MessageOverRabbitMQ) error {
 	return json.Unmarshal(m.Body, t)
 }
 
+type TradeHandler interface {
+	TideHandleBNTrade(*Trade) proto.TideRoutable
+}
+
+func (t *Trade) TideDispatch(target any) proto.TideRoutable {
+	if h, ok := target.(TradeHandler); ok {
+		return h.TideHandleBNTrade(t)
+	}
+	return nil
+}
+
 type WsTradeEvent struct {
 	Time          int64  `json:"E"`
 	Event         string `json:"e"`

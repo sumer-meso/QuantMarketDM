@@ -95,3 +95,14 @@ func (p *Portfolio) RMQDecodeMessage(m *proto.MessageOverRabbitMQ) error {
 	}
 	return json.Unmarshal(m.Body, p)
 }
+
+type PortfolioHandler interface {
+	TideHandleDBPortfolio(*Portfolio) proto.TideRoutable
+}
+
+func (p *Portfolio) TideDispatch(target any) proto.TideRoutable {
+	if h, ok := target.(PortfolioHandler); ok {
+		return h.TideHandleDBPortfolio(p)
+	}
+	return nil
+}

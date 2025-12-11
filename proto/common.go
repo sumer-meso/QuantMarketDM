@@ -169,3 +169,15 @@ func UnknownToKnown[T any, PT interface {
 
 	return &zero, nil
 }
+
+// TideRoutable is the core interface for all Tide-routable values.
+// Any type implementing this interface becomes part of the Tide routing system.
+//
+// TideDispatch must:
+//   - route the message to the appropriate TideHandleXxx on the target streamlet
+//   - return a new TideRoutable (or nil) as the outbound message
+type TideRoutable interface {
+	// TideDispatch delivers the message to a target streamlet and returns
+	// the outbound value (or nil if there is none).
+	TideDispatch(target any) TideRoutable
+}

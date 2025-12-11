@@ -73,3 +73,14 @@ func (t *Trade) RMQDecodeMessage(m *proto.MessageOverRabbitMQ) error {
 	}
 	return json.Unmarshal(m.Body, t)
 }
+
+type TradeHandler interface {
+	TideHandleDBTrade(*Trade) proto.TideRoutable
+}
+
+func (t *Trade) TideDispatch(target any) proto.TideRoutable {
+	if h, ok := target.(TradeHandler); ok {
+		return h.TideHandleDBTrade(t)
+	}
+	return nil
+}

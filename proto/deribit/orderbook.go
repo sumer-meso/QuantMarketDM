@@ -98,3 +98,14 @@ func (ob *OrderBook) RMQDecodeMessage(m *proto.MessageOverRabbitMQ) error {
 	}
 	return json.Unmarshal(m.Body, ob)
 }
+
+type OrderBookHandler interface {
+	TideHandleDBOrderBook(*OrderBook) proto.TideRoutable
+}
+
+func (ob *OrderBook) TideDispatch(target any) proto.TideRoutable {
+	if h, ok := target.(OrderBookHandler); ok {
+		return h.TideHandleDBOrderBook(ob)
+	}
+	return nil
+}

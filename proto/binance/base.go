@@ -23,6 +23,7 @@ var _ = []interface {
 	proto.RMQIdentifier
 	proto.RMQDataStorage
 	proto.RMQSerializationOnWire
+	proto.TideRoutable
 }{
 	(*Trade)(nil),
 	(*Kline)(nil),

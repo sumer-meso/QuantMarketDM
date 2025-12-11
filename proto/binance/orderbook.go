@@ -103,6 +103,17 @@ func (ob *OrderBook) RMQDecodeMessage(m *proto.MessageOverRabbitMQ) error {
 	return json.Unmarshal(m.Body, ob)
 }
 
+type OrderBookHandler interface {
+	TideHandleBNOrderBook(*OrderBook) proto.TideRoutable
+}
+
+func (ob *OrderBook) TideDispatch(target any) proto.TideRoutable {
+	if h, ok := target.(OrderBookHandler); ok {
+		return h.TideHandleBNOrderBook(ob)
+	}
+	return nil
+}
+
 type WsDepthEvent struct {
 	Event            string     `json:"e"`
 	Time             int64      `json:"E"`

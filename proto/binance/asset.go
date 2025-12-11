@@ -145,6 +145,17 @@ func (au *AccountUpdate) RMQDecodeMessage(m *proto.MessageOverRabbitMQ) error {
 	return json.Unmarshal(m.Body, au)
 }
 
+type AccountUpdateHandler interface {
+	TideHandleBNAccountUpdate(*AccountUpdate) proto.TideRoutable
+}
+
+func (au *AccountUpdate) TideDispatch(target any) proto.TideRoutable {
+	if h, ok := target.(AccountUpdateHandler); ok {
+		return h.TideHandleBNAccountUpdate(au)
+	}
+	return nil
+}
+
 type WsAccountUpdate struct {
 	Reason    string              `json:"m"`
 	Balances  []WsAccountBalance  `json:"B"`
@@ -243,6 +254,17 @@ func (ou *OrderUpdate) RMQDecodeMessage(m *proto.MessageOverRabbitMQ) error {
 	return json.Unmarshal(m.Body, ou)
 }
 
+type OrderUpdateHandler interface {
+	TideHandleBNOrderUpdate(*OrderUpdate) proto.TideRoutable
+}
+
+func (ou *OrderUpdate) TideDispatch(target any) proto.TideRoutable {
+	if h, ok := target.(OrderUpdateHandler); ok {
+		return h.TideHandleBNOrderUpdate(ou)
+	}
+	return nil
+}
+
 type WsOrderUpdate struct {
 	Symbol          string `json:"s"`
 	ClientOrderID   string `json:"c"`
@@ -323,6 +345,17 @@ func (tl *TradeLite) RMQDecodeMessage(m *proto.MessageOverRabbitMQ) error {
 		return proto.NotMatchError{Expected: tl.RMQDataIdentifier(), Actual: m.DataIdentifier}
 	}
 	return json.Unmarshal(m.Body, tl)
+}
+
+type TradeLiteHandler interface {
+	TideHandleBNTradeLite(*TradeLite) proto.TideRoutable
+}
+
+func (tl *TradeLite) TideDispatch(target any) proto.TideRoutable {
+	if h, ok := target.(TradeLiteHandler); ok {
+		return h.TideHandleBNTradeLite(tl)
+	}
+	return nil
 }
 
 type WsTradeLite struct {
