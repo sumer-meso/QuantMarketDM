@@ -1,4 +1,4 @@
-package user
+package dbuser
 
 import (
 	"encoding/json"
@@ -120,13 +120,13 @@ func (t *Trade) RMQDecodeMessage(m *proto.MessageOverRabbitMQ) error {
 	return json.Unmarshal(m.Body, t)
 }
 
-type TradeHandler interface {
-	HandleDBTrade(*Trade) proto.Routable
+type UserTradeHandler interface {
+	HandleDBUserTrade(*Trade) proto.Routable
 }
 
 func (t *Trade) DispatchTo(target any) proto.Routable {
-	if h, ok := target.(TradeHandler); ok {
-		return h.HandleDBTrade(t)
+	if h, ok := target.(UserTradeHandler); ok {
+		return h.HandleDBUserTrade(t)
 	}
 	return nil
 }

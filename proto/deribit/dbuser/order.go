@@ -1,4 +1,4 @@
-package user
+package dbuser
 
 import (
 	"encoding/json"
@@ -115,13 +115,13 @@ func (o *Order) RMQDecodeMessage(m *proto.MessageOverRabbitMQ) error {
 	return json.Unmarshal(m.Body, o)
 }
 
-type OrderHandler interface {
-	HandleDBOrder(*Order) proto.Routable
+type UserOrderHandler interface {
+	HandleDBUserOrder(*Order) proto.Routable
 }
 
 func (o *Order) DispatchTo(target any) proto.Routable {
-	if h, ok := target.(OrderHandler); ok {
-		return h.HandleDBOrder(o)
+	if h, ok := target.(UserOrderHandler); ok {
+		return h.HandleDBUserOrder(o)
 	}
 	return nil
 }

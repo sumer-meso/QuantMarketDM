@@ -2,7 +2,7 @@ package deribit
 
 import (
 	"github.com/sumer-meso/QuantMarketDM/proto"
-	"github.com/sumer-meso/QuantMarketDM/proto/deribit/user"
+	user "github.com/sumer-meso/QuantMarketDM/proto/deribit/dbuser"
 )
 
 var _ = []interface {

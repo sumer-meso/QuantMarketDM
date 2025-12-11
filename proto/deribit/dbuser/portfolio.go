@@ -1,4 +1,4 @@
-package user
+package dbuser
 
 import (
 	"encoding/json"
@@ -96,13 +96,13 @@ func (p *Portfolio) RMQDecodeMessage(m *proto.MessageOverRabbitMQ) error {
 	return json.Unmarshal(m.Body, p)
 }
 
-type PortfolioHandler interface {
-	HandleDBPortfolio(*Portfolio) proto.Routable
+type UserPortfolioHandler interface {
+	HandleDBUserPortfolio(*Portfolio) proto.Routable
 }
 
 func (p *Portfolio) DispatchTo(target any) proto.Routable {
-	if h, ok := target.(PortfolioHandler); ok {
-		return h.HandleDBPortfolio(p)
+	if h, ok := target.(UserPortfolioHandler); ok {
+		return h.HandleDBUserPortfolio(p)
 	}
 	return nil
 }

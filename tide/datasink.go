@@ -6,7 +6,7 @@ import (
 	"github.com/sumer-meso/QuantMarketDM/proto"
 	"github.com/sumer-meso/QuantMarketDM/proto/binance"
 	"github.com/sumer-meso/QuantMarketDM/proto/deribit"
-	"github.com/sumer-meso/QuantMarketDM/proto/deribit/user"
+	user "github.com/sumer-meso/QuantMarketDM/proto/deribit/dbuser"
 )
 
 // DataSink receives decoded data from wire.

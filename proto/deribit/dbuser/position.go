@@ -1,4 +1,4 @@
-package user
+package dbuser
 
 import (
 	"encoding/json"
@@ -80,13 +80,13 @@ func (p *Position) RMQDecodeMessage(m *proto.MessageOverRabbitMQ) error {
 	return json.Unmarshal(m.Body, p)
 }
 
-type PositionHandler interface {
-	HandleDBPosition(*Position) proto.Routable
+type UserPositionHandler interface {
+	HandleDBUserPosition(*Position) proto.Routable
 }
 
 func (p *Position) DispatchTo(target any) proto.Routable {
-	if h, ok := target.(PositionHandler); ok {
-		return h.HandleDBPosition(p)
+	if h, ok := target.(UserPositionHandler); ok {
+		return h.HandleDBUserPosition(p)
 	}
 	return nil
 }
