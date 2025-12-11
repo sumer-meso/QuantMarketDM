@@ -97,6 +97,17 @@ func (u *Unknown) RMQDecodeMessage(m *MessageOverRabbitMQ) error {
 	return nil
 }
 
+type UnknownHandler interface {
+	TideHandleDBOrder(*Unknown) TideRoutable
+}
+
+func (u *Unknown) TideDispatch(target any) TideRoutable {
+	if h, ok := target.(UnknownHandler); ok {
+		return h.TideHandleDBOrder(u)
+	}
+	return nil
+}
+
 type RMQIdentifier interface {
 	RMQRoutingIdentifier() string
 	RMQDataIdentifier() string
@@ -180,4 +191,12 @@ type TideRoutable interface {
 	// TideDispatch delivers the message to a target streamlet and returns
 	// the outbound value (or nil if there is none).
 	TideDispatch(target any) TideRoutable
+}
+
+var _ = []interface {
+	RMQIdentifier
+	RMQSerializationOnWire
+	TideRoutable
+}{
+	(*Unknown)(nil),
 }
