@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	"github.com/sumer-meso/QuantMarketDM/proto"
-	"github.com/sumer-meso/QuantMarketDM/utils/logging"
 )
 
 type OrderBookEntry struct {
@@ -109,12 +108,9 @@ type OrderBookHandler interface {
 }
 
 func (ob *OrderBook) DispatchTo(target any) proto.Routable {
-	logging.Debugf("[DispatchTo] Dispatching OrderBook to %v\n", target)
 	if h, ok := target.(OrderBookHandler); ok {
-		logging.Debugf("[DispatchTo] Dispatching OrderBook ok to %v\n", h)
 		return h.HandleBNOrderBook(ob)
 	}
-	logging.Debugf("[DispatchTo] Dispatching OrderBook not ok\n")
 	return nil
 }
 
