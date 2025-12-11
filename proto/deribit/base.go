@@ -9,7 +9,7 @@ var _ = []interface {
 	proto.RMQIdentifier
 	proto.RMQDataStorage
 	proto.RMQSerializationOnWire
-	proto.TideRoutable
+	proto.Routable
 }{
 	(*user.Portfolio)(nil),
 	(*user.Position)(nil),

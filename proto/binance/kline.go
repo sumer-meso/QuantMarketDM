@@ -88,12 +88,12 @@ func (k *Kline) RMQDecodeMessage(m *proto.MessageOverRabbitMQ) error {
 }
 
 type KlineHandler interface {
-	TideHandleBNKline(*Kline) proto.TideRoutable
+	HandleBNKline(*Kline) proto.Routable
 }
 
-func (k *Kline) TideDispatch(target any) proto.TideRoutable {
+func (k *Kline) DispatchTo(target any) proto.Routable {
 	if h, ok := target.(KlineHandler); ok {
-		return h.TideHandleBNKline(k)
+		return h.HandleBNKline(k)
 	}
 	return nil
 }

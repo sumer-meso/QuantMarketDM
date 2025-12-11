@@ -97,12 +97,12 @@ func (p *Portfolio) RMQDecodeMessage(m *proto.MessageOverRabbitMQ) error {
 }
 
 type PortfolioHandler interface {
-	TideHandleDBPortfolio(*Portfolio) proto.TideRoutable
+	HandleDBPortfolio(*Portfolio) proto.Routable
 }
 
-func (p *Portfolio) TideDispatch(target any) proto.TideRoutable {
+func (p *Portfolio) DispatchTo(target any) proto.Routable {
 	if h, ok := target.(PortfolioHandler); ok {
-		return h.TideHandleDBPortfolio(p)
+		return h.HandleDBPortfolio(p)
 	}
 	return nil
 }

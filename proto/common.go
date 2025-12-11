@@ -98,12 +98,12 @@ func (u *Unknown) RMQDecodeMessage(m *MessageOverRabbitMQ) error {
 }
 
 type UnknownHandler interface {
-	TideHandleDBOrder(*Unknown) TideRoutable
+	HandleDBOrder(*Unknown) Routable
 }
 
-func (u *Unknown) TideDispatch(target any) TideRoutable {
+func (u *Unknown) DispatchTo(target any) Routable {
 	if h, ok := target.(UnknownHandler); ok {
-		return h.TideHandleDBOrder(u)
+		return h.HandleDBOrder(u)
 	}
 	return nil
 }
@@ -187,16 +187,16 @@ func UnknownToKnown[T any, PT interface {
 // TideDispatch must:
 //   - route the message to the appropriate TideHandleXxx on the target streamlet
 //   - return a new TideRoutable (or nil) as the outbound message
-type TideRoutable interface {
-	// TideDispatch delivers the message to a target streamlet and returns
+type Routable interface {
+	// DispatchTo delivers the message to a target streamlet and returns
 	// the outbound value (or nil if there is none).
-	TideDispatch(target any) TideRoutable
+	DispatchTo(target any) Routable
 }
 
 var _ = []interface {
 	RMQIdentifier
 	RMQSerializationOnWire
-	TideRoutable
+	Routable
 }{
 	(*Unknown)(nil),
 }

@@ -116,12 +116,12 @@ func (o *Order) RMQDecodeMessage(m *proto.MessageOverRabbitMQ) error {
 }
 
 type OrderHandler interface {
-	TideHandleDBOrder(*Order) proto.TideRoutable
+	HandleDBOrder(*Order) proto.Routable
 }
 
-func (o *Order) TideDispatch(target any) proto.TideRoutable {
+func (o *Order) DispatchTo(target any) proto.Routable {
 	if h, ok := target.(OrderHandler); ok {
-		return h.TideHandleDBOrder(o)
+		return h.HandleDBOrder(o)
 	}
 	return nil
 }

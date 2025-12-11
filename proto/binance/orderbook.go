@@ -104,12 +104,12 @@ func (ob *OrderBook) RMQDecodeMessage(m *proto.MessageOverRabbitMQ) error {
 }
 
 type OrderBookHandler interface {
-	TideHandleBNOrderBook(*OrderBook) proto.TideRoutable
+	HandleBNOrderBook(*OrderBook) proto.Routable
 }
 
-func (ob *OrderBook) TideDispatch(target any) proto.TideRoutable {
+func (ob *OrderBook) DispatchTo(target any) proto.Routable {
 	if h, ok := target.(OrderBookHandler); ok {
-		return h.TideHandleBNOrderBook(ob)
+		return h.HandleBNOrderBook(ob)
 	}
 	return nil
 }

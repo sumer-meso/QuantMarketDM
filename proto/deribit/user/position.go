@@ -81,12 +81,12 @@ func (p *Position) RMQDecodeMessage(m *proto.MessageOverRabbitMQ) error {
 }
 
 type PositionHandler interface {
-	TideHandleDBPosition(*Position) proto.TideRoutable
+	HandleDBPosition(*Position) proto.Routable
 }
 
-func (p *Position) TideDispatch(target any) proto.TideRoutable {
+func (p *Position) DispatchTo(target any) proto.Routable {
 	if h, ok := target.(PositionHandler); ok {
-		return h.TideHandleDBPosition(p)
+		return h.HandleDBPosition(p)
 	}
 	return nil
 }

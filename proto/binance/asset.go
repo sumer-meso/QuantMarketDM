@@ -146,12 +146,12 @@ func (au *AccountUpdate) RMQDecodeMessage(m *proto.MessageOverRabbitMQ) error {
 }
 
 type AccountUpdateHandler interface {
-	TideHandleBNAccountUpdate(*AccountUpdate) proto.TideRoutable
+	HandleBNAccountUpdate(*AccountUpdate) proto.Routable
 }
 
-func (au *AccountUpdate) TideDispatch(target any) proto.TideRoutable {
+func (au *AccountUpdate) DispatchTo(target any) proto.Routable {
 	if h, ok := target.(AccountUpdateHandler); ok {
-		return h.TideHandleBNAccountUpdate(au)
+		return h.HandleBNAccountUpdate(au)
 	}
 	return nil
 }
@@ -255,12 +255,12 @@ func (ou *OrderUpdate) RMQDecodeMessage(m *proto.MessageOverRabbitMQ) error {
 }
 
 type OrderUpdateHandler interface {
-	TideHandleBNOrderUpdate(*OrderUpdate) proto.TideRoutable
+	HandleBNOrderUpdate(*OrderUpdate) proto.Routable
 }
 
-func (ou *OrderUpdate) TideDispatch(target any) proto.TideRoutable {
+func (ou *OrderUpdate) DispatchTo(target any) proto.Routable {
 	if h, ok := target.(OrderUpdateHandler); ok {
-		return h.TideHandleBNOrderUpdate(ou)
+		return h.HandleBNOrderUpdate(ou)
 	}
 	return nil
 }
@@ -348,12 +348,12 @@ func (tl *TradeLite) RMQDecodeMessage(m *proto.MessageOverRabbitMQ) error {
 }
 
 type TradeLiteHandler interface {
-	TideHandleBNTradeLite(*TradeLite) proto.TideRoutable
+	HandleBNTradeLite(*TradeLite) proto.Routable
 }
 
-func (tl *TradeLite) TideDispatch(target any) proto.TideRoutable {
+func (tl *TradeLite) DispatchTo(target any) proto.Routable {
 	if h, ok := target.(TradeLiteHandler); ok {
-		return h.TideHandleBNTradeLite(tl)
+		return h.HandleBNTradeLite(tl)
 	}
 	return nil
 }

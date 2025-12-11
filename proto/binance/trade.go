@@ -61,12 +61,12 @@ func (t *Trade) RMQDecodeMessage(m *proto.MessageOverRabbitMQ) error {
 }
 
 type TradeHandler interface {
-	TideHandleBNTrade(*Trade) proto.TideRoutable
+	HandleBNTrade(*Trade) proto.Routable
 }
 
-func (t *Trade) TideDispatch(target any) proto.TideRoutable {
+func (t *Trade) DispatchTo(target any) proto.Routable {
 	if h, ok := target.(TradeHandler); ok {
-		return h.TideHandleBNTrade(t)
+		return h.HandleBNTrade(t)
 	}
 	return nil
 }
