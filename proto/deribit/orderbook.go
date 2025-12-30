@@ -8,7 +8,7 @@ import (
 )
 
 type OrderBook struct {
-	Instrument      string      `json:"instrument_name"`  // 合约名称，如 "BTC-PERPETUAL"
+	Instrument      string      `json:"instrument"`       // 合约名称，如 "BTC-PERPETUAL"
 	Timestamp       int64       `json:"timestamp"`        // 订单簿时间戳（毫秒）
 	ChangeID        int64       `json:"change_id"`        // 当前变更ID，用于跟踪订单簿更新
 	PrevChangeID    int64       `json:"prev_change_id"`   // 上一个变更ID
