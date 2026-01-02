@@ -15,14 +15,14 @@ type OrderBook struct {
 	State           string      `json:"state"`            // 合约状态："open", "closed", "settled"
 	Bids            [][]float64 `json:"bids"`             // 买单数组，每个元素为[价格, 数量]
 	Asks            [][]float64 `json:"asks"`             // 卖单数组，每个元素为[价格, 数量]
-	BestBidPrice    float64     `json:"best_bid_price"`   // 最优买价
-	BestBidAmount   float64     `json:"best_bid_amount"`  // 最优买价对应的数量
-	BestAskPrice    float64     `json:"best_ask_price"`   // 最优卖价
-	BestAskAmount   float64     `json:"best_ask_amount"`  // 最优卖价对应的数量
-	MarkPrice       float64     `json:"mark_price"`       // 标记价格，用于保证金计算和强平
-	LastPrice       float64     `json:"last_price"`       // 最新成交价格
-	IndexPrice      float64     `json:"index_price"`      // 指数价格，标的资产的参考价格
-	OpenInterest    float64     `json:"open_interest"`    // 未平仓合约数量
+	BestBidPrice    float64     `json:"bid"`              // 最优买价
+	BestBidAmount   float64     `json:"bidVolume"`        // 最优买价对应的数量
+	BestAskPrice    float64     `json:"ask"`              // 最优卖价
+	BestAskAmount   float64     `json:"askVolume"`        // 最优卖价对应的数量
+	MarkPrice       float64     `json:"markPrice"`        // 标记价格，用于保证金计算和强平
+	LastPrice       float64     `json:"lastPrice"`        // 最新成交价格
+	IndexPrice      float64     `json:"indexPrice"`       // 指数价格，标的资产的参考价格
+	OpenInterest    float64     `json:"openInterest"`     // 未平仓合约数量
 	MaxPrice        float64     `json:"max_price"`        // 当日最高价格限制
 	MinPrice        float64     `json:"min_price"`        // 当日最低价格限制
 	SettlementPrice float64     `json:"settlement_price"` // 结算价格
